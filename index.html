@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CE2407A – Interactive Tutorial Game (Q2, Q3, Q4, Q7)</title>
+  <title>CE2407A – Interactive Tutorial Game (Q2, Q3, Q4, Q7) + Rule‑Based AI Coach</title>
   <style>
     :root{
       --bg:#0b1220; --panel:#121a2b; --panel2:#0f1626; --ink:#e9f0ff; --muted:#a9b6d3; --accent:#66d9e8; --ok:#7ce38b; --warn:#ffd166; --bad:#ff6b6b;
@@ -16,7 +16,7 @@
     .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
     .tab-btn{padding:10px 14px;border-radius:14px;background:#101933;border:1px solid #1e2a46;color:var(--muted);cursor:pointer}
     .tab-btn.active{color:var(--ink);border-color:#2a3b67;background:linear-gradient(180deg,#101d3a,#0e1830)}
-    main{max-width:1100px;margin:18px auto;padding:0 20px 40px}
+    main{max-width:1100px;margin:18px auto;padding:0 20px 70px}
     .card{background:linear-gradient(180deg,#0f172a,#0e1526);border:1px solid #1f2a4a;border-radius:18px;padding:18px;margin:16px 0;box-shadow:0 10px 30px rgba(0,0,0,.25)}
     .grid{display:grid;gap:16px}
     .g2{grid-template-columns:1.2fr .8fr}
@@ -36,8 +36,6 @@
     input[type="text"]{width:100%;padding:8px;border-radius:10px;border:1px solid #2c4273;background:#0c1a33;color:var(--ink)}
     label{font-size:14px;color:var(--muted)}
     .pill{display:inline-flex;gap:6px;align-items:center;background:#0b1730;border:1px solid #20345f;padding:6px 10px;border-radius:999px;font-size:12px;color:var(--muted)}
-    .check{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--ok)}
-    .x{background:var(--bad)}
     .mc li{margin:6px 0}
     .mc input{transform:translateY(1px)}
     canvas{background:#0a1223;border:1px solid #213662;border-radius:14px}
@@ -46,6 +44,20 @@
     .tbl{width:100%;border-collapse:collapse}
     .tbl th,.tbl td{border:1px solid #22345d;padding:8px;text-align:center;font-family:ui-monospace,Consolas,monospace}
     .badge{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid #2c4273;font-size:12px;color:#a9b6d3}
+
+    /* AI coach */
+    .coach{border:1px solid #22345d;border-radius:14px;background:linear-gradient(180deg,#0c1326,#0a1223);padding:10px;margin-top:10px}
+    .coach .bar{display:flex;gap:8px;align-items:center;justify-content:space-between}
+    .coach small{color:var(--muted)}
+    .coach .msgs{height:180px;overflow:auto;border:1px solid #22345d;border-radius:12px;padding:10px;margin-top:8px;background:#0a1020}
+    .coach .msg{margin:6px 0;line-height:1.35}
+    .coach .me{color:#c5e4ff}
+    .coach .bot{color:#a0f0b5}
+    .coach textarea{width:100%;min-height:42px;padding:8px;border-radius:10px;border:1px solid #2c4273;background:#0c1a33;color:var(--ink)}
+    .coach .row2{display:flex;gap:8px;margin-top:8px}
+    .coach .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+    .coach .chip{font-size:12px;border-radius:999px;border:1px solid #2c4273;padding:4px 8px;background:#0b1730;cursor:pointer}
+    .coach .chip:hover{border-color:#3c5d9c}
   </style>
 </head>
 <body>
@@ -58,7 +70,7 @@
         <button class="tab-btn" data-tab="q4">Q4 · Pollution & Bayes</button>
         <button class="tab-btn" data-tab="q7">Q7 · Two detectors</button>
       </div>
-      <div class="footer">Try tweaking the inputs for an interactive learning experience.</div>
+      <div class="footer">Try tweaking the inputs for an interactive learning experience. Press <span class="kbd">?</span> to toggle hints.</div>
     </div>
   </header>
 
@@ -95,11 +107,26 @@
           </ol>
           <div class="row" style="margin-top:6px"><button id="q2check">Check answers</button><span id="q2res" class="pill" style="display:none"></span></div>
           <p class="hint">Mutually exclusive ⇔ intersection is empty.</p>
+
+          <!-- AI Coach for Q2 -->
+          <div class="coach" id="coach-q2">
+            <div class="bar"><small>AI Coach — Q2 reasoning & set relations</small></div>
+            <div class="chips">
+              <span class="chip" data-prompt="q2" data-text="Explain why D ⊆ E, using A, B, C.">Explain why D ⊆ E</span>
+              <span class="chip" data-prompt="q2" data-text="Give a hint for the mutually exclusive questions without revealing the answer.">Hint (mutual exclusivity)</span>
+              <span class="chip" data-prompt="q2" data-text="Check my quiz choices.">Check my quiz choices</span>
+            </div>
+            <div class="msgs" id="msgs-q2"></div>
+            <div class="row2">
+              <textarea id="ask-q2" placeholder="Ask about A,B,C,D,E,F, unions/intersections…"></textarea>
+              <button data-send="q2">Send</button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Q3 (enhanced with full context) -->
+    <!-- Q3 -->
     <section id="q3" class="card" style="display:none">
       <h2>Q3 · Power plant reliability — story, sets, and computation</h2>
       <details open><summary><span class="badge">Story</span> Problem context</summary>
@@ -125,6 +152,21 @@
             <button id="q3aShow" class="secondary">Show model answer</button>
           </div>
           <p class="hint">Use symbols: <code>H^c</code> for complement, <code>∩</code> for intersection, <code>∪</code> for union, <code>Δ</code> for symmetric difference (exactly one).</p>
+
+          <!-- AI Coach for Q3 -->
+          <div class="coach" id="coach-q3">
+            <div class="bar"><small>AI Coach — Q3 sets, independence & probabilities</small></div>
+            <div class="chips">
+              <span class="chip" data-prompt="q3" data-text="Check my (a) S/M/U definitions.">Check my (a) definitions</span>
+              <span class="chip" data-prompt="q3" data-text="Walk me through part (b) without numbers.">Walk me through (b)</span>
+              <span class="chip" data-prompt="q3" data-text="Explain S/M/U intuitively.">Explain S/M/U</span>
+            </div>
+            <div class="msgs" id="msgs-q3"></div>
+            <div class="row2">
+              <textarea id="ask-q3" placeholder="Ask about event algebra or the computations…"></textarea>
+              <button data-send="q3">Send</button>
+            </div>
+          </div>
         </div>
         <div>
           <h3>Outcome visualizer (truth table)</h3>
@@ -162,7 +204,7 @@
       </div>
     </section>
 
-    <!-- Q4 (kept as before) -->
+    <!-- Q4 -->
     <section id="q4" class="card" style="display:none">
       <h2>Q4 · Pollution, total probability & Bayes — interactive</h2>
       <details open><summary><span class="badge">Story</span> Problem context</summary>
@@ -204,6 +246,21 @@
             <button id="q4apply">Apply & compare P(fish kill)</button>
             <span id="q4delta" class="pill" style="display:none"></span>
           </div>
+
+          <!-- AI Coach for Q4 -->
+          <div class="coach" id="coach-q4" style="margin-top:14px">
+            <div class="bar"><small>AI Coach — Q4 total probability & Bayes</small></div>
+            <div class="chips">
+              <span class="chip" data-prompt="q4" data-text="Check (a)–(c) with my inputs.">Check (a)–(c)</span>
+              <span class="chip" data-prompt="q4" data-text="Explain why the best process is chosen in (d).">Why that process in (d)?</span>
+              <span class="chip" data-prompt="q4" data-text="Give one conceptual hint.">Conceptual hint</span>
+            </div>
+            <div class="msgs" id="msgs-q4"></div>
+            <div class="row2">
+              <textarea id="ask-q4" placeholder="Ask about priors, likelihoods, Bayes, or sensitivity…"></textarea>
+              <button data-send="q4">Send</button>
+            </div>
+          </div>
         </div>
 
         <div>
@@ -228,7 +285,7 @@
       </div>
     </section>
 
-    <!-- Q7 (kept as before) -->
+    <!-- Q7 -->
     <section id="q7" class="card" style="display:none">
       <h2>Q7 · Two detectors (independent) — interactive</h2>
       <details open><summary><span class="badge">Story</span> Problem context</summary>
@@ -263,6 +320,21 @@
               <span id="q7qRes" class="pill" style="display:none"></span>
             </div>
           </details>
+
+          <!-- AI Coach for Q7 -->
+          <div class="coach" id="coach-q7">
+            <div class="bar"><small>AI Coach — Q7 independence & accuracy</small></div>
+            <div class="chips">
+              <span class="chip" data-prompt="q7" data-text="Check my (a)–(c) values.">Check (a)–(c)</span>
+              <span class="chip" data-prompt="q7" data-text="Explain why “only one” ≠ mutual exclusivity.">Only one ≠ mutually exclusive</span>
+              <span class="chip" data-prompt="q7" data-text="Give a next‑step hint.">Next‑step hint</span>
+            </div>
+            <div class="msgs" id="msgs-q7"></div>
+            <div class="row2">
+              <textarea id="ask-q7" placeholder="Ask about inclusion‑exclusion, only‑one vs both, etc."></textarea>
+              <button data-send="q7">Send</button>
+            </div>
+          </div>
         </div>
 
         <div>
@@ -345,6 +417,16 @@
     }));
     document.getElementById('q2clear')?.addEventListener('click', renderBase);
 
+    // --- Q2 check button pill
+    document.getElementById('q2check')?.addEventListener('click',()=>{
+      const a = [...document.querySelectorAll('input[name=q2a]')].find(x=>x.checked)?.value;
+      const b = [...document.querySelectorAll('input[name=q2b]')].find(x=>x.checked)?.value;
+      const pill = document.getElementById('q2res'); if(!pill) return; pill.style.display='inline-flex';
+      const okA = (a==='no'); const okB = (b==='no');
+      if(!a || !b){ pill.textContent='Answer both first.'; return; }
+      pill.textContent = `Q1: ${okA?'✓':'✗'}  Q2: ${okB?'✓':'✗'}`;
+    });
+
     // --- Q3 helpers
     const sanitize = s => (s||'').replace(/\s+/g,'').toUpperCase();
     function checkA(){
@@ -374,7 +456,7 @@
       const M = (!!(e1^e2) && !h);
       const cls = S?'S' : (M?'M':'U');
       rows.push({e1,e2,h,cls});
-    }}}
+    }}};
     const q3tbl = document.getElementById('q3tbl');
     if(q3tbl){
       q3tbl.innerHTML = rows.map(r=>`<tr title="${r.cls==='S'?'both working & not hot':(r.cls==='M'?'exactly one down & not hot':'otherwise')}"><td>${r.e1? 'E₁':'E₁^c'}</td><td>${r.e2? 'E₂':'E₂^c'}</td><td>${r.h? 'H':'H^c'}</td><td>${r.cls}</td></tr>`).join('');
@@ -424,7 +506,6 @@
     });
 
     // --- Q4
-    function toNums(str){ return str.split(',').map(s=>Number(s.trim())).filter(x=>!Number.isNaN(x)); }
     function toNums(str){ return str.split(',').map(s=>Number(s.trim())).filter(x=>!Number.isNaN(x)); }
     function drawBars(canvasId, labels, values){
       const c = document.getElementById(canvasId); if(!c) return; const g=c.getContext('2d');
@@ -574,6 +655,144 @@
       const pill = document.getElementById('q7qRes'); if(!pill) return; pill.style.display='inline-flex';
       if(!val){ pill.textContent='Select true/false.'; return; }
       pill.textContent = (val==='F') ? 'Correct: "only one" refers to the outcome, not the relationship between A and B.' : 'Not quite: A and B need not be mutually exclusive.';
+    });
+
+    // --- AI Coach core (purely local heuristic tutor; no network / API)
+    const coachMsgs = { q2:[], q3:[], q4:[], q7:[] };
+
+    function getQ2State(){
+      const a1=[...document.querySelectorAll('input[name=q2a]')].find(x=>x.checked)?.value||'(no choice)';
+      const a2=[...document.querySelectorAll('input[name=q2b]')].find(x=>x.checked)?.value||'(no choice)';
+      return {
+        radios:{Q1:a1,Q2:a2},
+        facts:{
+          A:'V>20', B:'12<V≤30', C:'θ≤30°', D:'A∩C', E:'A∪B', F:'A∩B∩C',
+          correct:{ q1:'no', q2:'no' }
+        }
+      };
+    }
+    function getQ3State(){
+      return {
+        inputs:{ p1:+document.getElementById('p1').value, p2:+document.getElementById('p2').value, ph:+document.getElementById('ph').value },
+        defs:{ S:document.getElementById('q3a_s').value, M:document.getElementById('q3a_m').value, U:document.getElementById('q3a_u').value },
+        last: document.getElementById('q3out').innerText
+      };
+    }
+    function getQ4State(){
+      return {
+        prior: document.getElementById('q4prior').value,
+        poll: document.getElementById('q4poll').value,
+        kill: document.getElementById('q4kill').value,
+        results: document.getElementById('q4out').innerText,
+        best: (window.q4_state||{}).best
+      };
+    }
+    function getQ7State(){
+      return {
+        pa:+document.getElementById('qa').value,
+        pb:+document.getElementById('qb').value,
+        accA:+document.getElementById('qaccA').value,
+        accB:+document.getElementById('qaccB').value,
+        results: document.getElementById('q7out').innerText
+      };
+    }
+
+    function localTutor(section, userText){
+      try{
+        if(section==='q2'){
+          const st=getQ2State();
+          if(/check/i.test(userText)){
+            return `Your choices → Q1: ${st.radios.Q1}, Q2: ${st.radios.Q2}.\nRemember: D=A∩C and E=A∪B. Since D⊆A⊆E, D∩E=D≠∅ ⇒ not mutually exclusive. Also A and C can overlap when V>20 & θ≤30°. So both answers should be "no".`;
+          }
+          if(/why.*D.*subset.*E|D.*⊆.*E/i.test(userText)){
+            return 'E is A∪B and D is A∩C. Any outcome in D is in A, hence also in A∪B. Therefore D⊆E.';
+          }
+          if(/hint|exclusive|mutual/i.test(userText)){
+            return 'Hint: To test mutual exclusivity, sketch or imagine the intersection. If you can exhibit any point with V>20 and θ≤30°, it lies in A∩C, so A and C are not disjoint.';
+          }
+          return 'Try writing D=A∩C and E=A∪B, then test if an element of D must be in E. For mutual exclusivity, check if intersections are empty.';
+        }
+        if(section==='q3'){
+          const st=getQ3State();
+          if(/check.*\(a\)|definitions?|S.*M.*U/i.test(userText)){
+            const sOK = /H\^c.*E1\^c.*E2\^c/i.test(st.defs.S);
+            const mOK = /H\^c.*(E1.*Δ.*E2|E1\s*Δ\s*E2)/i.test(st.defs.M);
+            const uOK = /\(\s*S\s*∪\s*M\s*\)\s*\^c/i.test(st.defs.U);
+            return `Checks — S: ${sOK?'✓':'✗'}, M: ${mOK?'✓':'✗'}, U: ${uOK?'✓':'✗'}. Hint: S=H^c∩E1^c∩E2^c; M=H^c∩(E1ΔE2); U=(S∪M)^c.`;
+          }
+          if(/part.*b|exact(ly)? one/i.test(userText)){
+            return 'Use E₁⊕E₂: p₁(1−p₂)+(1−p₁)p₂. Independence is not needed for (b).';
+          }
+          if(/explain.*S.*M.*U|intuitive/i.test(userText)){
+            return 'S: both units up and not hot. M: exactly one down and not hot. U: anything else (including hot weeks).';
+          }
+          if(/compute|numbers|verify/i.test(userText)){
+            const {p1,p2,ph}=st.inputs;
+            if([p1,p2,ph].some(x=>!(x>=0&&x<=1))) return 'Make sure p₁, p₂, P(H) are in [0,1].';
+            const p_notH=1-ph, p_none=(1-p1)*(1-p2), p_exactOne=p1*(1-p2)+(1-p1)*p2;
+            const S=p_none*p_notH, M=p_exactOne*p_notH, U=1-(S+M);
+            return `With p₁=${p1}, p₂=${p2}, P(H)=${ph} → P(exactly one)=${fix(p_exactOne)}, then P(S)=${fix(S)}, P(M)=${fix(M)}, P(U)=${fix(U)}.`;
+          }
+          return 'State your p₁, p₂, P(H) and your (a) definitions; I will check and hint.';
+        }
+        if(section==='q4'){
+          const st=getQ4State();
+          if(/check|verify|a\).*c\)/i.test(userText)){
+            return `Use: P(no poll)=ΣP(i)[1−P(p|i)], P(A|poll)=P(A)P(p|A)/P(poll), P(kill)=ΣP(i)P(p|i)P(k|p,i). The largest contributor in (d) is the process with max P(i)P(p|i)P(k|p,i) — currently ${st.best||'(? compute first )'}.`;
+          }
+          if(/why.*best|explain.*best|why that process/i.test(userText)){
+            return 'Improving the process with the largest contribution P(i)·P(pollute|i)·P(kill|pollution,i) yields the biggest immediate reduction in overall fish‑kill probability.';
+          }
+          if(/hint|concept/i.test(userText)){
+            return 'Think of a two‑stage tree: choose process i with prior P(i), then pollution with P(p|i), then fish‑kill with P(k|p,i). Multiply along branches; sum over i.';
+          }
+          return 'Compute (a)–(c) first (click Compute), then compare contributions P(i)·P(p|i)·P(k|p,i) for (d).';
+        }
+        if(section==='q7'){
+          const st=getQ7State();
+          if(/check|verify|values|a\).*c\)/i.test(userText)){
+            return `Use: ≥1 = 1−(1−pA)(1−pB); only one = pA(1−pB)+(1−pA)pB; accurate = pA(1−pB)·accA + pB(1−pA)·accB + pA pB. With your inputs A=${st.pa}, B=${st.pb}, accA=${st.accA}, accB=${st.accB}.`;
+          }
+          if(/only one.*mutual|exclusive/i.test(userText)){
+            return '“Only one detects” describes an outcome of a trial. A and B themselves are not mutually exclusive; independence allows P(A∩B)=P(A)P(B)>0.';
+          }
+          if(/hint|next/i.test(userText)){
+            return 'Compute p(A only), p(B only), and p(A∩B) separately. Then: (a) add the last two + both; (b) add only‑one terms; (c) weight each piece by its accuracy.';
+          }
+          return 'Ask me to check your (a)–(c) setup or to explain only‑one vs mutual exclusivity.';
+        }
+      }catch(e){ return 'I could not parse the current state, but I can still help conceptually. What are you stuck on?'; }
+    }
+
+    function addMsg(boxId, who, text){
+      const box = document.getElementById(boxId); if(!box) return;
+      const div = document.createElement('div');
+      div.className = `msg ${who==='you'?'me':'bot'}`;
+      div.textContent = (who==='you'? 'You: ' : 'Coach: ') + text;
+      box.appendChild(div); box.scrollTop = box.scrollHeight;
+    }
+
+    function handleAsk(section){
+      const input = document.getElementById(`ask-${section}`);
+      const msgsId = `msgs-${section}`;
+      const text = (input.value||'').trim(); if(!text) return;
+      addMsg(msgsId,'you',text); input.value='';
+      try{
+        const reply = localTutor(section, text);
+        addMsg(msgsId,'bot',reply);
+      }catch(err){ addMsg(msgsId,'bot', `Sorry — ${err.message}`); }
+    }
+
+    document.querySelectorAll('button[data-send]')?.forEach(btn=>{
+      btn.addEventListener('click',()=> handleAsk(btn.getAttribute('data-send')));
+    });
+    document.querySelectorAll('.chip[data-prompt]')?.forEach(chip=>{
+      chip.addEventListener('click',()=>{
+        const sec = chip.getAttribute('data-prompt');
+        const txt = chip.getAttribute('data-text') || '';
+        const area = document.getElementById(`ask-${sec}`);
+        if(area){ area.value = txt; area.focus(); }
+      });
     });
 
     // Keyboard hint toggle

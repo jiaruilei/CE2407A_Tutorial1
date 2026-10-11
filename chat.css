@@ -1,0 +1,28 @@
+/* Matches the hydrostatic-pressure AI Proxy panel. */
+.coach-card{padding:18px;border-top:1px solid var(--line);background:linear-gradient(135deg,#f8fbff,#eef5ff)}
+.coach-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.coach-title{display:flex;align-items:center;gap:10px;color:#172b4d;font-size:18px;font-weight:850;letter-spacing:normal}
+.coach-icon{display:grid;flex-shrink:0;width:36px;height:36px;place-items:center;border-radius:12px;color:#fff;background:linear-gradient(135deg,#2563eb,#7c3aed);box-shadow:0 8px 18px rgba(37,99,235,.2)}
+.coach-icon svg{width:22px;height:22px}
+.coach-status{display:inline-flex;align-items:center;gap:6px;color:#5d6b7d;font-size:12px;white-space:nowrap}
+.coach-status::before{width:8px;height:8px;flex-shrink:0;border-radius:50%;background:#f59e0b;content:""}
+.coach-status.online::before{background:#10b981}
+.coach-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;color:var(--muted);font-size:13px}
+.coach-toolbar button{padding:5px 9px;min-height:32px;font-size:12px}
+.coach-log{height:340px;overflow:auto;overscroll-behavior:contain;padding:12px;border:1px solid #d7e2ef;border-radius:11px;background:#fff}
+.coach-message{width:fit-content;max-width:88%;margin:0 0 9px;padding:9px 11px;border-radius:11px;font-size:16px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.coach-message.assistant{color:#1e3a8a;border:1px solid #dbeafe;background:#eff6ff}
+.coach-message.user{margin-left:auto;color:#fff;background:var(--accent)}
+.coach-message.pending{color:#64748b;font-style:italic}
+.coach-message.error{color:#991b1b;background:#fff1f2;border:1px solid #fecdd3}
+.coach-message [data-tex]{display:inline-block;max-width:100%;vertical-align:middle;overflow-x:auto;overflow-y:hidden;padding:3px 0}
+.coach-message .chat-math-display{display:block;margin:7px 0}
+.coach-message mjx-container{max-width:100%}
+.coach-message mjx-container[display=true]{margin:.12em 0!important;text-align:left!important}
+.coach-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.coach-chips button{padding:7px 10px;border:1px solid #bdd4f5;border-radius:8px;color:#1d4ed8;background:#fff;font-size:12px;font-weight:700;min-height:34px}
+.coach-chips button:hover{background:#eff6ff}
+.coach-form{display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:9px;margin-top:10px}
+.coach-form textarea{min-height:60px;resize:vertical;font-size:16px}
+.coach-form button{border:0;border-radius:9px;color:#fff;background:var(--accent);font-weight:800}
+@media(max-width:600px){.coach-header{align-items:flex-start;flex-direction:column;gap:8px}.coach-message{max-width:96%}.coach-form{grid-template-columns:1fr}.coach-form button{min-height:44px}}

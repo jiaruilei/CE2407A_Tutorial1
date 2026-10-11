@@ -4,15 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="CE2407A Tutorial 1: all seven questions on sample spaces, conditional probability, independence and Bayes' theorem.">
-  <title>CE2407A · Tutorial 1</title>
+  <title>Tutorial 1 (Week 9) Sets &amp; probability</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="chat.css">
   <script src="math-rendering.js"></script>
 </head>
 <body>
 <div class="shell">
   <header class="page-header">
     <p class="course-label">CE2407A · Uncertainty Analysis for Engineers</p>
-    <h1>Tutorial 1 <span>Sets &amp; probability</span></h1>
+    <h1>Tutorial 1 (Week 9) <span>Sets &amp; probability</span></h1>
     <p class="focus-note">Tutorial 1 focus: Q1, Q2, Q3 &amp; Q5</p>
     <nav class="tabs" id="tabs" aria-label="Tutorial questions">
       <button class="tab-btn active" data-tab="q1" aria-controls="q1" aria-current="true">Q1 · Routes</button>
@@ -45,7 +46,6 @@
           <div class="panel-title"><h3>Highway network</h3><span id="q1-highlight" role="status">Route: 1</span></div>
           <div class="plot network-wrap" tabindex="0" role="region" aria-label="Highway network; scroll horizontally on a small screen"><svg id="q1network" viewBox="0 0 730 430" role="img" aria-labelledby="q1-network-title q1-network-desc" xmlns="http://www.w3.org/2000/svg"></svg></div>
           <div class="card results-card q1-time-card"><h3>Travel times</h3><div id="q1-time-results" class="out" role="status">Calculate the possible travel times.</div><details><summary>Working</summary><div id="q1-combinations" class="table-scroll"></div></details></div>
-          <details class="coach"><summary>Hints</summary><p class="brief">List each directed route once. For travel times, add one possible time from each leg, then remove duplicate totals.</p></details>
         </div>
       </div>
     </section>
@@ -74,10 +74,6 @@
         <div class="visual-panel">
           <div class="panel-title"><h3>Sample space</h3><span id="q2selection" role="status">No events selected</span></div>
           <div class="plot"><canvas id="polar" width="520" height="420" role="img" aria-label="Wind sample space: speed is radial distance; direction is measured from east towards north."></canvas></div>
-          <details class="coach" id="coach-q2"><summary>Hints</summary>
-            <div class="chips"><button class="chip" data-prompt="q2" data-text="Explain why D ⊆ E."><span data-tex="D\subseteq E">D ⊆ E</span></button><button class="chip" data-prompt="q2" data-text="Give a hint for mutual exclusivity.">Mutual exclusivity</button><button class="chip" data-prompt="q2" data-text="Check my quiz choices.">Check choices</button></div>
-            <div class="msgs" id="msgs-q2" role="log" aria-label="Q2 hints"></div><div class="row2"><textarea id="ask-q2" aria-label="Ask about Q2" placeholder="Ask about the events…"></textarea><button data-send="q2">Ask</button></div>
-          </details>
         </div>
       </div>
     </section>
@@ -103,7 +99,6 @@
         <div class="visual-panel">
           <div class="card"><h3>Operating states</h3><table class="tbl"><thead><tr><th scope="col">Unit 1</th><th scope="col">Unit 2</th><th scope="col">Weather</th><th scope="col">State</th></tr></thead><tbody id="q3tbl"></tbody></table></div>
           <div class="card results-card"><h3>Results</h3><div class="out" id="q3out" role="status">Calculate the outage and operating-state probabilities.</div><details><summary>Working</summary><div class="out" id="q3steps"></div></details></div>
-          <details class="coach" id="coach-q3"><summary>Hints</summary><div class="chips"><button class="chip" data-prompt="q3" data-text="Check my definitions.">Check definitions</button><button class="chip" data-prompt="q3" data-text="Explain part b without numbers.">Exactly one outage</button><button class="chip" data-prompt="q3" data-text="Explain S/M/U intuitively.">Operating states</button></div><div class="msgs" id="msgs-q3" role="log" aria-label="Q3 hints"></div><div class="row2"><textarea id="ask-q3" aria-label="Ask about Q3" placeholder="Ask about states or probabilities…"></textarea><button data-send="q3">Ask</button></div></details>
         </div>
       </div>
     </section>
@@ -120,7 +115,6 @@
           <div class="card chart-card"><h3 id="q4chart-title">Fish-kill contribution by process</h3><canvas id="q4chart" width="520" height="260" role="img" aria-label="Each process's contribution to total fish-kill probability."></canvas></div>
           <details class="disclosure"><summary>Working</summary><div class="out" id="q4steps"></div></details>
           <details class="disclosure"><summary>Check: largest fish-kill contribution?</summary><fieldset class="choice-row"><legend class="sr-only">Choose a process with the largest contribution</legend><label><input type="radio" name="q4quiz" value="A"> A</label><label><input type="radio" name="q4quiz" value="B"> B</label><label><input type="radio" name="q4quiz" value="C"> C</label><label><input type="radio" name="q4quiz" value="D"> D</label></fieldset><div class="actions"><button id="q4qCheck">Check</button><span id="q4qRes" class="pill" role="status" style="display:none"></span></div></details>
-          <details class="coach" id="coach-q4"><summary>Hints</summary><div class="chips"><button class="chip" data-prompt="q4" data-text="Check (a)–(c) with my inputs.">Total probability</button><button class="chip" data-prompt="q4" data-text="Explain why the best process is chosen in (d).">Compare processes</button><button class="chip" data-prompt="q4" data-text="Give one conceptual hint.">Probability tree</button></div><div class="msgs" id="msgs-q4" role="log" aria-label="Q4 hints"></div><div class="row2"><textarea id="ask-q4" aria-label="Ask about Q4" placeholder="Ask about Bayes or pollution…"></textarea><button data-send="q4">Ask</button></div></details>
         </div>
       </div>
     </section>
@@ -155,7 +149,6 @@
             <div class="out" id="q5out" role="status">Calculate from the highlighted region.</div>
             <details><summary>Working</summary><div class="out" id="q5steps"></div></details>
           </div>
-          <details class="coach"><summary>Hints</summary><p class="brief" id="q5hint">Condition on compaction first. Count the highlighted outcomes within that sample.</p></details>
         </div>
       </div>
     </section>
@@ -186,7 +179,6 @@
           <div class="card results-card"><h3>Results</h3><div class="out" id="q6out" role="status">Calculate to evaluate (a)–(d).</div></div>
           <div class="card chart-card"><h3 id="q6chart-title">Liquefaction contribution by intensity</h3><canvas id="q6chart" width="520" height="260" role="img" aria-label="Contributions to liquefaction probability from low, medium and high intensity earthquakes."></canvas></div>
           <details class="disclosure"><summary>Working</summary><div class="out" id="q6steps"></div></details>
-          <details class="coach"><summary>Hints</summary><p class="brief">Normalise the rates first. Use total probability for F, independence for three survivals, and Bayes’ theorem for <span data-tex="P(L\mid F)">P(L | F)</span>.</p></details>
         </div>
       </div>
     </section>
@@ -203,16 +195,35 @@
           <div class="card results-card"><h3>Results</h3><div class="out" id="q7out" role="status">Calculate the detection and location probabilities.</div></div>
           <div class="card chart-card"><h3 id="q7chart-title">Accurate-location contributions</h3><canvas id="q7chart" width="520" height="260" role="img" aria-label="Contributions to accurate-location probability from A only, B only, and both detectors."></canvas></div>
           <details class="disclosure"><summary>Working</summary><div class="out" id="q7steps"></div></details>
-          <details class="coach" id="coach-q7"><summary>Hints</summary><div class="chips"><button class="chip" data-prompt="q7" data-text="Check my (a)–(c) values.">Check probabilities</button><button class="chip" data-prompt="q7" data-text="Explain only one versus mutual exclusivity.">Only one vs. exclusive</button><button class="chip" data-prompt="q7" data-text="Give a next-step hint.">Next step</button></div><div class="msgs" id="msgs-q7" role="log" aria-label="Q7 hints"></div><div class="row2"><textarea id="ask-q7" aria-label="Ask about Q7" placeholder="Ask about detection or accuracy…"></textarea><button data-send="q7">Ask</button></div></details>
         </div>
       </div>
     </section>
   </main>
+
+  <section class="coach-card" aria-labelledby="coachTitle">
+    <div class="coach-header">
+      <h2 class="coach-title" id="coachTitle"><span class="coach-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M4 4h16v12H9l-5 4V4Z"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M8 8h8M8 12h5"/></svg></span>Prof. Gary’s AI Proxy</h2>
+      <span class="coach-status" id="coachStatus" role="status">Checking server…</span>
+    </div>
+    <div class="coach-toolbar"><span id="coachContext">Q1 · Routes</span><button type="button" id="coachClear" class="secondary">Clear chat</button></div>
+    <div class="coach-log" id="coachLog" role="log" aria-live="polite" aria-label="Tutorial conversation"></div>
+    <div class="coach-chips" aria-label="Suggested questions">
+      <button type="button" data-question="Explain the key idea in this question briefly.">Explain the idea</button>
+      <button type="button" data-question="Check my current inputs and working for this question.">Check my working</button>
+      <button type="button" data-question="Explain the formula for this question.">Explain the formula</button>
+      <button type="button" data-question="What is the next step? Keep it brief.">Next step</button>
+    </div>
+    <form class="coach-form" id="coachForm">
+      <textarea id="coachQuestion" maxlength="800" placeholder="Ask about Q1…" aria-label="Question for Prof. Gary’s AI Proxy"></textarea>
+      <button type="submit" id="coachSend">Ask</button>
+    </form>
+  </section>
 </div>
 <script src="tutorial.js"></script>
 <script src="question1.js"></script>
 <script src="question5.js"></script>
 <script src="question6.js"></script>
+<script src="chat.js"></script>
 <script id="MathJax-script" async src="assets/mathjax/tex-svg.js"></script>
 </body>
 </html>

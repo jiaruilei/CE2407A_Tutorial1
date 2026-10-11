@@ -1,0 +1,11 @@
+{
+  "name": "ce2407a-tutorial1",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CE2407A Tutorial 1 exercises and a server-side OpenAI tutor",
+  "engines": { "node": ">=22 <25" },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.mjs",
+    "test": "node --test"
+  }
+}

@@ -110,7 +110,6 @@ test('equivalent Q3 expressions are accepted, malformed and wrong expressions ar
   p.click('q3aShow');
   assert.match(p.get('q3aout').textContent, /^S: ✓ · M: ✓ · U: ✓/);
   assert.match(p.get('q3aout').textContent, /S = Hᶜ ∩ E₁ᶜ ∩ E₂ᶜ/);
-  assert.match(p.run("localTutor('q3', 'Walk me through part (b)').map(row => row.text || row.fallback).join(' ')"), /Independence gives/);
 });
 
 test('Q4 reports the A/C tie and compares scenarios against its baseline', () => {
@@ -230,16 +229,4 @@ test('edits, reset and invalid inputs clear old MathJax output through the share
   assert.equal(p.get('q4delta').mathRows, undefined);
   p.click('q7calc'); p.input('qb', '0.5');
   assert.equal(p.get('q7out').mathRows, undefined);
-});
-
-test('user messages remain literal text while trusted hint formulas use the math helper', () => {
-  const p = page(true);
-  const message = String.raw`part b \\htmlClass{unexpected}{x} <img src=x>`;
-  p.get('ask-q3').value = message;
-  p.run("handleAsk('q3')");
-  const [user, hint] = p.get('msgs-q3').children;
-  assert.equal(user.textContent, `You: ${message}`);
-  assert.equal(user.mathRows, undefined);
-  assert.ok(hint.mathRows.some(row => row.tex?.includes(String.raw`E_1\triangle E_2`)));
-  assert.ok(hint.mathRows.every(row => !row.tex?.includes('unexpected')));
 });

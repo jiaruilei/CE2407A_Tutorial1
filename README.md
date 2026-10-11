@@ -6,6 +6,8 @@ Prof. Gary’s AI Proxy uses the same chat layout as the hydrostatic-pressure la
 
 Live web service: [ce2407a-tutorial1.onrender.com](https://ce2407a-tutorial1.onrender.com). The GitHub Pages and local copies use this service for chat.
 
+Link to a specific question with `?question=q3`. For slides on GitHub Pages, embed `https://jiaruilei.github.io/CE2407A_Tutorial1/?question=q3&embed=1`; this hides the repeated page header and tabs while keeping the exercise and AI chat. Replace `q3` with any question from `q1` to `q7`.
+
 Run locally with Node.js 22 or 24:
 
 ```sh

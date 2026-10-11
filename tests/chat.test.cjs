@@ -39,7 +39,7 @@ function fixture(options = {}) {
   const body = new Element('body'), elements = {};
   const add = (id, tag = 'div', attrs = {}, parent = body) => { const node = new Element(tag, { id, ...attrs }); elements[id] = node; parent.appendChild(node); return node; };
   for (let i = 1; i <= 7; i++) {
-    const tab = add(`tab${i}`, 'button', { 'data-tab': `q${i}`, 'aria-current': String(i === 1) });
+    const tab = add(`tab${i}`, 'button', { 'data-tab': `q${i}`, 'aria-current': String(`q${i}` === (options.initialQuestion || 'q1')) });
     tab.textContent = `Q${i} · Topic ${i}`;
     tab.addEventListener('click', () => { for (let j = 1; j <= 7; j++) elements[`tab${j}`].setAttribute('aria-current', String(i === j)); });
     add(`q${i}`, 'section');
@@ -96,6 +96,17 @@ test('only local files and GitHub Pages use the configured API destination', () 
   for (const value of ['javascript:alert(1)', 'https://user:pass@example.com', 'https://example.com/?key=secret', 'invalid']) {
     assert.equal(resolveApiBase({ protocol: 'file:' }, value), '');
   }
+});
+
+test('chat starts on a deep-linked question and sends that question to the configured Pages API', async () => {
+  const p = fixture({ initialQuestion: 'q5', location: { protocol: 'https:', hostname: 'jiaruilei.github.io' }, meta: 'https://ce2407a-tutorial1.onrender.com' });
+  await p.health(true);
+  assert.equal(p.elements.coachQuestion.placeholder, 'Ask about Q5…');
+  const pending = p.controller.send('Explain part (a).');
+  assert.equal(p.calls[1].url, 'https://ce2407a-tutorial1.onrender.com/api/chat');
+  assert.equal(JSON.parse(p.calls[1].settings.body).question, 'q5');
+  p.calls[1].resolve(response({ answer: 'Use 43/50.' }));
+  await pending;
 });
 
 test('snapshots capture the current input, selected event/part and semantic route without duplicate rendered math', () => {

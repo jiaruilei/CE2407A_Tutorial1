@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="CE2407A Tutorial 1: interactive exercises on sets, independence, total probability and Bayes' theorem.">
+  <meta name="description" content="CE2407A Tutorial 1: all seven questions on sample spaces, conditional probability, independence and Bayes' theorem.">
   <title>CE2407A · Tutorial 1</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -12,15 +12,44 @@
   <header class="page-header">
     <p class="course-label">CE2407A · Uncertainty Analysis for Engineers</p>
     <h1>Tutorial 1 <span>Sets &amp; probability</span></h1>
+    <p class="focus-note">Tutorial 1 focus: Q1, Q2, Q3 &amp; Q5</p>
     <nav class="tabs" id="tabs" aria-label="Tutorial questions">
-      <button class="tab-btn active" data-tab="q2" aria-controls="q2" aria-current="true">Q2 · Wind</button>
+      <button class="tab-btn active" data-tab="q1" aria-controls="q1" aria-current="true">Q1 · Routes</button>
+      <button class="tab-btn" data-tab="q2" aria-controls="q2">Q2 · Wind</button>
       <button class="tab-btn" data-tab="q3" aria-controls="q3">Q3 · Power plant</button>
       <button class="tab-btn" data-tab="q4" aria-controls="q4">Q4 · Pollution</button>
+      <button class="tab-btn" data-tab="q5" aria-controls="q5">Q5 · Pavement</button>
+      <button class="tab-btn" data-tab="q6" aria-controls="q6">Q6 · Earthquakes</button>
       <button class="tab-btn" data-tab="q7" aria-controls="q7">Q7 · Detectors</button>
     </nav>
   </header>
   <main>
-    <section id="q2" aria-labelledby="q2title">
+    <section id="q1" aria-labelledby="q1title">
+      <div class="section-heading"><h2 id="q1title">Highway routes &amp; travel times</h2><p>Travel from city 1 to city 9. Follow the arrows; edge labels give possible times in hours.</p></div>
+      <div class="workspace">
+        <div class="controls">
+          <h3>(a) Find the sample space</h3>
+          <div class="stacked-fields"><label for="q1-next">Next city</label><select id="q1-next"></select></div>
+          <div class="actions"><button id="q1-add">Add city</button><button id="q1-undo" class="secondary">Undo</button><button id="q1-reset" class="secondary">Start again</button></div>
+          <div id="q1-current" class="feedback" role="status">1</div>
+          <div class="actions"><button id="q1-show-routes" class="secondary" aria-expanded="false" aria-controls="q1-routes">Show all routes</button></div>
+          <div id="q1-routes" class="q1-route-list" hidden></div>
+          <div class="control-section">
+            <h3>(b) Possible travel times</h3>
+            <div class="stacked-fields"><label for="q1-time-route">Route</label><select id="q1-time-route"><option value="1,2,9">1 → 2 → 9</option><option value="1,4,6,8,9">1 → 4 → 6 → 8 → 9</option></select></div>
+            <div class="actions"><button id="q1-calculate">Calculate</button></div>
+          </div>
+        </div>
+        <div class="visual-panel">
+          <div class="panel-title"><h3>Highway network</h3><span id="q1-highlight" role="status">Route: 1</span></div>
+          <div class="plot network-wrap" tabindex="0" role="region" aria-label="Highway network; scroll horizontally on a small screen"><svg id="q1network" viewBox="0 0 730 430" role="img" aria-labelledby="q1-network-title q1-network-desc" xmlns="http://www.w3.org/2000/svg"></svg></div>
+          <div class="card results-card q1-time-card"><h3>Travel times</h3><div id="q1-time-results" class="out" role="status">Calculate the possible travel times.</div><details><summary>Working</summary><div id="q1-combinations" class="table-scroll"></div></details></div>
+          <details class="coach"><summary>Hints</summary><p class="brief">List each directed route once. For travel times, add one possible time from each leg, then remove duplicate totals.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section id="q2" aria-labelledby="q2title" style="display:none">
       <div class="section-heading"><h2 id="q2title">Wind speed &amp; direction</h2><p>V ≥ 0 mph; 0° ≤ θ ≤ 90°. Select events to compare their regions.</p></div>
       <div class="workspace wind-layout">
         <div class="controls">
@@ -94,6 +123,73 @@
         </div>
       </div>
     </section>
+    <section id="q5" style="display:none" aria-labelledby="q5-title">
+      <div class="section-heading"><h2 id="q5-title">Compaction &amp; pavement life</h2><p>C: compaction (%) · L: pavement life (months) · 100 test results</p></div>
+      <div class="workspace">
+        <div class="controls">
+          <h3>Choose a probability</h3>
+          <div class="event-grid q5-parts" aria-label="Question 5 parts">
+            <button type="button" class="secondary" data-q5-part="a" aria-pressed="true"><b>(a)</b><span>P(20 &lt; L ≤ 40 | C ≥ 70)</span></button>
+            <button type="button" class="secondary" data-q5-part="b" aria-pressed="false"><b>(b)</b><span>P(L &gt; 40 | C ≤ 95)</span></button>
+            <button type="button" class="secondary" data-q5-part="c" aria-pressed="false"><b>(c)</b><span>P(L &gt; 40 | 70 &lt; C ≤ 95)</span></button>
+            <button type="button" class="secondary" data-q5-part="d" aria-pressed="false"><b>(d)</b><span>P(L &gt; 30 and C &lt; 70)</span></button>
+          </div>
+          <div class="actions"><button type="button" id="q5calc">Calculate</button></div>
+        </div>
+        <div class="visual-panel">
+          <div class="card">
+            <div class="q5-legend" aria-hidden="true"><span><i class="q5-condition-key"></i>Sample (denominator)</span><span><i class="q5-event-key"></i>Count (numerator)</span></div>
+            <div class="q5-plot">
+              <img src="assets/q5-original-plot.png" width="1120" height="808" alt="Original scatter plot of 100 pavement tests, with compaction thresholds 70% and 95% and pavement-life thresholds 20, 30 and 40 months.">
+              <svg viewBox="0 0 560 404" aria-hidden="true" focusable="false">
+                <rect id="q5condition-region" fill="#f59e0b" fill-opacity=".12" stroke="#b45309" stroke-width="1.2" stroke-dasharray="4 3"></rect>
+                <rect id="q5event-region" fill="#2563eb" fill-opacity=".22" stroke="#2563eb" stroke-width="1.5"></rect>
+              </svg>
+            </div>
+            <p id="q5selection" class="feedback" role="status"></p>
+          </div>
+          <div class="card results-card">
+            <h3>Results</h3>
+            <table class="tbl q5-counts"><thead><tr><th scope="col">Sample count</th><th scope="col">Event count</th></tr></thead><tbody><tr><td id="q5denominator">—</td><td id="q5numerator">—</td></tr></tbody></table>
+            <div class="out" id="q5out" role="status">Calculate from the highlighted region.</div>
+            <details><summary>Working</summary><div class="out" id="q5steps"></div></details>
+          </div>
+          <details class="coach"><summary>Hints</summary><p class="brief" id="q5hint">Condition on C first. Count the outcomes with 20 &lt; L ≤ 40 within that sample.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section id="q6" aria-labelledby="q6title" style="display:none">
+      <div class="section-heading">
+        <h2 id="q6title">Earthquakes &amp; liquefaction</h2>
+        <p>L, M, H: earthquake intensities. F: liquefaction. Successive earthquakes are independent.</p>
+      </div>
+      <div class="workspace">
+        <div class="controls">
+          <h3>Occurrence &amp; liquefaction</h3>
+          <table class="tbl input-table">
+            <thead><tr><th scope="col">Intensity</th><th scope="col">Rate / year</th><th scope="col">P(F | i)</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Low (L)</th><td><input id="q6rateL" aria-label="Low intensity occurrence rate per year" type="number" value="1" min="0" step="0.01"></td><td><input id="q6riskL" aria-label="Liquefaction probability given low intensity" type="number" value="0.05" min="0" max="1" step="0.01"></td></tr>
+              <tr><th scope="row">Medium (M)</th><td><input id="q6rateM" aria-label="Medium intensity occurrence rate per year" type="number" value="0.1" min="0" step="0.01"></td><td><input id="q6riskM" aria-label="Liquefaction probability given medium intensity" type="number" value="0.20" min="0" max="1" step="0.01"></td></tr>
+              <tr><th scope="row">High (H)</th><td><input id="q6rateH" aria-label="High intensity occurrence rate per year" type="number" value="0.01" min="0" step="0.01"></td><td><input id="q6riskH" aria-label="Liquefaction probability given high intensity" type="number" value="0.90" min="0" max="1" step="0.01"></td></tr>
+            </tbody>
+          </table>
+          <div class="actions"><button id="q6calc">Calculate</button><button id="q6reset" class="secondary">Reset</button></div>
+          <div class="control-section">
+            <h3>Intensity probabilities</h3>
+            <div id="q6weights" class="feedback" role="status">Calculate to normalise the occurrence rates.</div>
+          </div>
+        </div>
+        <div class="visual-panel">
+          <div class="card results-card"><h3>Results</h3><div class="out" id="q6out" role="status">Calculate to evaluate (a)–(d).</div></div>
+          <div class="card chart-card"><h3 id="q6chart-title">Liquefaction contribution by intensity</h3><canvas id="q6chart" width="520" height="260" role="img" aria-label="Contributions to liquefaction probability from low, medium and high intensity earthquakes."></canvas></div>
+          <details class="disclosure"><summary>Working</summary><div class="out" id="q6steps"></div></details>
+          <details class="coach"><summary>Hints</summary><p class="brief">Normalise the rates first. Use total probability for F, independence for three survivals, and Bayes’ theorem for P(L | F).</p></details>
+        </div>
+      </div>
+    </section>
+
     <section id="q7" aria-labelledby="q7title" style="display:none">
       <div class="section-heading"><h2 id="q7title">Two independent detectors</h2><p>Either detector can detect the object. If both detect it, its location is accurate.</p></div>
       <div class="workspace">
@@ -113,5 +209,8 @@
   </main>
 </div>
 <script src="tutorial.js"></script>
+<script src="question1.js"></script>
+<script src="question5.js"></script>
+<script src="question6.js"></script>
 </body>
 </html>

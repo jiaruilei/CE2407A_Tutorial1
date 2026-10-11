@@ -213,14 +213,14 @@ test('concurrency guard protects API usage and releases after an answer', async 
   assert.equal((await app.chat()).status, 200);
 });
 
-test('configuration preserves the reference model and a classroom-friendly shared-IP allowance', () => {
+test('configuration uses GPT-6.1 Sol with reasoning headroom and a classroom-friendly shared-IP allowance', () => {
   const config = readConfig({});
-  assert.equal(config.model, 'gpt-5.6-terra');
-  assert.equal(config.maxOutputTokens, 350);
+  assert.equal(config.model, 'gpt-6.1-sol');
+  assert.equal(config.maxOutputTokens, 2048);
   assert.equal(config.requestsPerMinute, 120);
   assert.equal(config.timeoutMs, 55000);
   assert.equal(config.dailyLimit, 2000);
-  assert.equal(readConfig({ OPENAI_MODEL: '  ' }).model, 'gpt-5.6-terra');
+  assert.equal(readConfig({ OPENAI_MODEL: '  ' }).model, 'gpt-6.1-sol');
   assert.equal(readConfig({ CHAT_DAILY_LIMIT: '-1' }).dailyLimit, 2000);
-  assert.equal(readConfig({ OPENAI_MAX_OUTPUT_TOKENS: '99999999' }).maxOutputTokens, 350);
+  assert.equal(readConfig({ OPENAI_MAX_OUTPUT_TOKENS: '99999999' }).maxOutputTokens, 2048);
 });

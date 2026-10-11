@@ -90,19 +90,6 @@ const R = Math.min(W - 140, H - 120);
 const PX_PER_MPH = 4;
 const m2px = speed => speed * PX_PER_MPH;
 const selectedEvents = new Set();
-const eventNames = {
-  A: 'A: V > 20', B: 'B: 12 < V ≤ 30', C: 'C: θ ≤ 30°',
-  Ac: 'Aᶜ: V ≤ 20', D: 'D: V > 20, θ ≤ 30°',
-  E: 'E: V > 12', F: 'F: 20 < V ≤ 30, θ ≤ 30°'
-};
-const eventTex = {
-  A: String.raw`A=\{V>20\}`, B: String.raw`B=\{12<V\leq30\}`,
-  C: String.raw`C=\{0\leq\theta\leq30^\circ\}`,
-  Ac: String.raw`A^{c}=\{0\leq V\leq20\}`,
-  D: String.raw`D=A\cap C=\{V>20,\ \theta\leq30^\circ\}`,
-  E: String.raw`E=A\cup B=\{V>12\}`,
-  F: String.raw`F=A\cap B\cap C=\{20<V\leq30,\ \theta\leq30^\circ\}`
-};
 function clearBase() {
   if (!ctx) return;
   ctx.clearRect(0, 0, W, H);
@@ -150,8 +137,6 @@ function renderQ2() {
   document.querySelectorAll('[data-draw]').forEach(btn => {
     btn.setAttribute('aria-pressed', String(selectedEvents.has(btn.dataset.draw)));
   });
-  if (selectedEvents.size) setMathLines('q2selection', [...selectedEvents].map(key => ({ tex: eventTex[key], fallback: eventNames[key] })));
-  else setText('q2selection', 'No events selected · V is unbounded');
 }
 document.querySelectorAll('[data-draw]').forEach(btn => {
   btn.addEventListener('click', () => {

@@ -38,7 +38,7 @@ export function readConfig(env = process.env) {
   return {
     apiKey: (env.OPENAI_API_KEY || '').trim(),
     model: env.OPENAI_MODEL?.trim() || 'gpt-5.6-terra',
-    maxOutputTokens: positiveInteger(env.OPENAI_MAX_OUTPUT_TOKENS, 1200, 8192),
+    maxOutputTokens: positiveInteger(env.OPENAI_MAX_OUTPUT_TOKENS, 350, 8192),
     timeoutMs: positiveInteger(env.OPENAI_TIMEOUT_MS, 55000, 120000),
     requestsPerMinute: positiveInteger(env.CHAT_REQUESTS_PER_MINUTE, 120, 10000),
     dailyLimit: positiveInteger(env.CHAT_DAILY_LIMIT, 2000, 1000000),

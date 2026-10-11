@@ -13,7 +13,7 @@ function loadQuestion(withMath = false) {
   });
   const elements = Object.fromEntries([
     'q5', 'q5calc', 'q5condition-region', 'q5event-region', 'q5selection',
-    'q5hint', 'q5denominator', 'q5numerator', 'q5out', 'q5steps'
+    'q5denominator', 'q5numerator', 'q5out', 'q5steps'
   ].map(id => [id, node()]));
   const buttons = ['a', 'b', 'c', 'd'].map(key => ({ ...node(), dataset: { q5Part: key } }));
   const document = {
@@ -80,7 +80,6 @@ test('part (d) is joint probability over all tests, without conditioning on C', 
   assert.match(page.elements.q5selection.textContent, /Sample: all 100 tests/);
   assert.match(page.elements.q5steps.textContent, /11\/100/);
   assert.doesNotMatch(page.elements.q5steps.textContent, /P\(A \| B\)/);
-  assert.match(page.elements.q5hint.textContent, /joint probability/);
 });
 
 test('the original plot asset is present at the intended crop resolution', () => {

@@ -13,7 +13,7 @@ npm ci
 npm start
 ```
 
-Open `http://localhost:3000`. Set `OPENAI_API_KEY` in the server environment to enable chat. The defaults match the hydrostatic-pressure app: `gpt-5.6-terra`, the OpenAI Responses API, `low` reasoning effort, and a 350-token output limit. This app also sets `store: false` and a 55-second request timeout. See `.env.example` for optional overrides and limits. Never place the key in HTML or browser JavaScript.
+Open `http://localhost:3000`. Set `OPENAI_API_KEY` in the server environment to enable chat. The tutor uses `gpt-6.1-sol` through the OpenAI Responses API, with `low` reasoning effort and a 2,048-token budget for reasoning and output. Answers stay concise through the tutor instructions. Requests use `store: false` and a 55-second timeout. See `.env.example` for optional overrides and limits. Never place the key in HTML or browser JavaScript.
 
 For Render, create a Node web service from this repository’s `main` branch, with `npm ci` as the build command and `npm start` as the start command. Set `OPENAI_API_KEY` in Render’s environment settings. The server listens on `0.0.0.0:$PORT`; `/health` reports whether chat is configured.
 

@@ -212,12 +212,12 @@ function definitionChecks() {
 on('q3aCheck', 'click', () => setText('q3aout', definitionChecks()));
 on('q3aShow', 'click', () => {
   byId('q3a_s').value = 'H^c ∩ E1^c ∩ E2^c';
-  byId('q3a_m').value = 'H^c ∩ (E1 Δ E2)';
+  byId('q3a_m').value = '(E1^c ∩ E2 ∩ H^c) ∪ (E1 ∩ E2^c ∩ H^c)';
   byId('q3a_u').value = 'H ∪ (E1 ∩ E2 ∩ H^c)';
   setMathLines('q3aout', [
     { text: definitionChecks() },
     { tex: String.raw`S=H^{c}\cap E_1^{c}\cap E_2^{c}`, fallback: 'S = Hᶜ ∩ E₁ᶜ ∩ E₂ᶜ' },
-    { tex: String.raw`M=H^{c}\cap(E_1\triangle E_2)`, fallback: 'M = Hᶜ ∩ (E₁ Δ E₂)' },
+    { tex: String.raw`\begin{aligned}M={}&(E_1^{c}\cap E_2\cap H^{c})\\&\cup(E_1\cap E_2^{c}\cap H^{c})\end{aligned}`, fallback: 'M = (E₁ᶜ ∩ E₂ ∩ Hᶜ) ∪ (E₁ ∩ E₂ᶜ ∩ Hᶜ)' },
     { tex: String.raw`U=H\cup(E_1\cap E_2\cap H^{c})`, fallback: 'U = H ∪ (E₁ ∩ E₂ ∩ Hᶜ)' }
   ]);
 });
@@ -241,7 +241,7 @@ function q3Calculate() {
   const exactlyOne = p1 * (1 - p2) + (1 - p1) * p2;
   const S = (1 - p1) * (1 - p2) * (1 - ph), M = exactlyOne * (1 - ph), U = ph + p1 * p2 * (1 - ph);
   setMathLines('q3out', [
-    { label: '(b)', tex: String.raw`P(E_1\triangle E_2)=${fix(exactlyOne)}`, fallback: `P(exactly one outage) = ${fix(exactlyOne)}` },
+    { label: '(b)', tex: String.raw`P[(E_1^{c}\cap E_2)\cup(E_1\cap E_2^{c})]=${fix(exactlyOne)}`, fallback: `P[(E₁ᶜ ∩ E₂) ∪ (E₁ ∩ E₂ᶜ)] = ${fix(exactlyOne)}` },
     { label: '(c)', tex: String.raw`P(S)=${fix(S)}`, fallback: `P(S) = ${fix(S)}` },
     { tex: String.raw`P(M)=${fix(M)}`, fallback: `P(M) = ${fix(M)}` },
     { tex: String.raw`P(U)=${fix(U)}`, fallback: `P(U) = ${fix(U)}` }
@@ -249,9 +249,9 @@ function q3Calculate() {
   setMathLines('q3steps', [
     { text: 'By independence:' },
     { tex: String.raw`p_i=P(E_i),\qquad i=1,2`, fallback: 'pᵢ = P(Eᵢ), i = 1,2' },
-    { tex: String.raw`P(E_1\triangle E_2)=p_1(1-p_2)+(1-p_1)p_2=${fix(exactlyOne)}`, fallback: `P(exactly one) = p₁(1−p₂) + (1−p₁)p₂ = ${fix(exactlyOne)}` },
+    { tex: String.raw`\begin{aligned}&P[(E_1^{c}\cap E_2)\cup(E_1\cap E_2^{c})]\\&=(1-p_1)p_2+p_1(1-p_2)=${fix(exactlyOne)}\end{aligned}`, fallback: `P[(E₁ᶜ ∩ E₂) ∪ (E₁ ∩ E₂ᶜ)] = (1−p₁)p₂ + p₁(1−p₂) = ${fix(exactlyOne)}` },
     { tex: String.raw`P(S)=(1-p_1)(1-p_2)[1-P(H)]=${fix(S)}`, fallback: `P(S) = (1−p₁)(1−p₂)(1−P(H)) = ${fix(S)}` },
-    { tex: String.raw`P(M)=P(E_1\triangle E_2)[1-P(H)]=${fix(M)}`, fallback: `P(M) = P(exactly one)(1−P(H)) = ${fix(M)}` },
+    { tex: String.raw`\begin{aligned}P(M)&=[(1-p_1)p_2+p_1(1-p_2)]\\&\quad\times[1-P(H)]\\&=${fix(M)}\end{aligned}`, fallback: `P(M) = [(1−p₁)p₂ + p₁(1−p₂)](1−P(H)) = ${fix(M)}` },
     { tex: String.raw`P(U)=P(H)+p_1p_2[1-P(H)]=${fix(U)}`, fallback: `P(U) = P(H) + p₁p₂(1−P(H)) = ${fix(U)}` }
   ]);
 }

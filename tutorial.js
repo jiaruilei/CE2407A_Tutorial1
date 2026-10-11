@@ -306,7 +306,7 @@ function clearQ4Results(message) {
   q4_state = null;
   setText('q4chart-title', 'Fish-kill contribution by process');
   setText('q4out', message); setText('q4steps', ''); clearChart('q4chart');
-  hidePill('q4qRes'); hidePill('q4delta');
+  hidePill('q4delta');
 }
 function q4Calculate() {
   clearQ4Results('');
@@ -321,7 +321,7 @@ function q4Calculate() {
   const contrib = prior.map((value, i) => value * poll[i] * kill[i]);
   const pKill = contrib.reduce((sum, value) => sum + value, 0), max = Math.max(...contrib);
   const best = processLabels.filter((_, i) => Math.abs(contrib[i] - max) <= Math.max(1e-15, max * 1e-12));
-  q4_state = { prior, poll, kill, contrib, best, pKill };
+  q4_state = { prior, poll, kill, contrib, pKill };
   const bestText = max === 0 ? 'All contributions are zero.' : `${best.join(' and ')}${best.length > 1 ? ' tie' : ''}: ${fix(max)}${best.length > 1 ? ' each' : ''}.`;
   setMathLines('q4out', [
     { label: '(a)', tex: String.raw`P(F^c)=${fix(pNo)}\quad(${pct(pNo).replace('%', '\\%')})`, fallback: `P(no pollution) = ${fix(pNo)} (${pct(pNo)})` },
@@ -344,14 +344,7 @@ on('q4calc', 'click', q4Calculate);
 on('q4reset', 'click', () => {
   ['0.2,0.4,0.3,0.1', '0.40,0.05,0.30,0.10', '0.9,0.1,0.8,0.3'].forEach((value, i) => { byId(['q4prior', 'q4poll', 'q4kill'][i]).value = value; });
   byId('q4which').value = '0'; byId('q4tune').value = '0.20';
-  clearQ4Results('Calculate parts (a)–(d).'); clearChoices('q4quiz');
-});
-on('q4qCheck', 'click', () => {
-  const value = chosen('q4quiz');
-  if (!q4_state) { showPill('q4qRes', 'Calculate the current inputs first.'); return; }
-  if (!value) { showPill('q4qRes', 'Select an option.'); return; }
-  const best = q4_state.best, correct = best.includes(value) || (value === 'AC' && best.join('') === 'AC');
-  showPill('q4qRes', `${correct ? 'Correct.' : 'Try again.'} ${best.join(' and ')}${best.length > 1 ? ' tie' : ' contributes most'}.`);
+  clearQ4Results('Calculate parts (a)–(d).');
 });
 on('q4apply', 'click', () => {
   if (!q4_state) { showPill('q4delta', 'Calculate the current inputs first.'); return; }
@@ -410,9 +403,9 @@ on('q7qCheck', 'click', () => {
   const value = chosen('q7quiz');
   showPill('q7qRes', !value ? 'Select true or false.' : `${value === 'F' ? 'Correct.' : 'Try again.'} “Exactly one” is an outcome. Both detectors can detect together.`);
 });
-['q4quiz', 'q7quiz'].forEach(name => document.querySelectorAll(`input[name=${name}]`).forEach(input => {
-  input.addEventListener('change', () => hidePill(name === 'q4quiz' ? 'q4qRes' : 'q7qRes'));
-}));
+document.querySelectorAll('input[name=q7quiz]').forEach(input => {
+  input.addEventListener('change', () => hidePill('q7qRes'));
+});
 
 globalThis.addEventListener?.('resize', () => {
   renderQ2();

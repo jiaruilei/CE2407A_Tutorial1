@@ -213,12 +213,12 @@ on('q3aCheck', 'click', () => setText('q3aout', definitionChecks()));
 on('q3aShow', 'click', () => {
   byId('q3a_s').value = 'H^c ∩ E1^c ∩ E2^c';
   byId('q3a_m').value = 'H^c ∩ (E1 Δ E2)';
-  byId('q3a_u').value = 'H ∪ (E1 ∩ E2)';
+  byId('q3a_u').value = 'H ∪ (E1 ∩ E2 ∩ H^c)';
   setMathLines('q3aout', [
     { text: definitionChecks() },
     { tex: String.raw`S=H^{c}\cap E_1^{c}\cap E_2^{c}`, fallback: 'S = Hᶜ ∩ E₁ᶜ ∩ E₂ᶜ' },
     { tex: String.raw`M=H^{c}\cap(E_1\triangle E_2)`, fallback: 'M = Hᶜ ∩ (E₁ Δ E₂)' },
-    { tex: String.raw`U=H\cup(E_1\cap E_2)`, fallback: 'U = H ∪ (E₁ ∩ E₂)' }
+    { tex: String.raw`U=H\cup(E_1\cap E_2\cap H^{c})`, fallback: 'U = H ∪ (E₁ ∩ E₂ ∩ Hᶜ)' }
   ]);
 });
 ['q3a_s', 'q3a_m', 'q3a_u'].forEach(id => on(id, 'input', () => setText('q3aout', 'Check your expressions.')));

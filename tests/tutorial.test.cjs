@@ -9,7 +9,7 @@ const source = fs.readFileSync(path.join(root, 'tutorial.js'), 'utf8');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 
 // A small DOM/canvas harness exercises the actual page IDs and event handlers.
-function page(withMath = false) {
+function page(withMath = false, search = '') {
   function element(tag, attributes = {}) {
     const classes = new Set((attributes.class || '').split(/\s+/));
     const listeners = new Map();
@@ -46,11 +46,12 @@ function page(withMath = false) {
     return element(tag, attributes);
   });
   const document = {
+    body: elements.find(node => node.tag === 'body'),
     getElementById: id => elements.find(node => node.id === id) || null,
     createElement: tag => element(tag),
     querySelectorAll(selector) {
       if (selector === '.tab-btn') return elements.filter(node => node.classList.contains('tab-btn'));
-      if (selector === 'main section') return elements.filter(node => node.tag === 'section');
+      if (selector === 'main section') return elements.filter(node => node.tag === 'section' && /^q[1-7]$/.test(node.id));
       if (selector === '[data-draw]') return elements.filter(node => node.dataset.draw);
       if (selector === 'button[data-send]') return elements.filter(node => node.tag === 'button' && node.dataset.send);
       if (selector === '.chip[data-prompt]') return elements.filter(node => node.classList.contains('chip') && node.dataset.prompt);
@@ -69,7 +70,7 @@ function page(withMath = false) {
     },
     typeset(element) { typesetCalls.push(element); }
   };
-  const context = vm.createContext({ document, ...(withMath ? { TutorialMath } : {}) });
+  const context = vm.createContext({ document, URLSearchParams, location: { search }, ...(withMath ? { TutorialMath } : {}) });
   vm.runInContext(source, context, { filename: 'tutorial.js' });
   const get = id => {
     const node = document.getElementById(id);
@@ -78,7 +79,7 @@ function page(withMath = false) {
   };
   get('q4which').value = '0';
   return {
-    get, mathCalls, typesetCalls, run: expression => vm.runInContext(expression, context),
+    get, body: document.body, mathCalls, typesetCalls, run: expression => vm.runInContext(expression, context),
     click: id => get(id).dispatch('click'),
     input(id, value) { get(id).value = value; get(id).dispatch('input'); },
     choose(name, value) {
@@ -186,6 +187,30 @@ test('tab navigation updates visible question and aria-current', () => {
   assert.equal(p.get('q7').style.display, 'block');
   assert.equal(p.get('q2').style.display, 'none');
   assert.equal(p.tabs.filter(tab => tab.attributes['aria-current'] === 'true').length, 1);
+});
+
+test('question deep links select the requested exercise before chat reads aria-current', () => {
+  for (const question of ['q1', 'q2', 'q3', 'q5', 'q7']) {
+    const p = page(true, `?question=${question}&embed=1`);
+    assert.equal(p.get(question).style.display, 'block');
+    assert.equal(p.tabs.find(tab => tab.attributes['aria-current'] === 'true').dataset.tab, question);
+    assert.equal(p.tabs.filter(tab => tab.attributes['aria-current'] === 'true').length, 1);
+    assert.ok(p.body.classList.contains('tutorial-embed'));
+    assert.ok(p.typesetCalls.includes(p.get(question)));
+    assert.equal(p.run("document.querySelectorAll('main section').filter(section => section.style.display === 'block').length"), 1);
+  }
+});
+
+test('invalid routes keep Q1 and embed mode requires the explicit value 1', () => {
+  for (const question of ['', 'q0', 'q8', 'Q3', '__proto__', '<script>']) {
+    const p = page(false, `?question=${encodeURIComponent(question)}&embed=true`);
+    assert.equal(p.tabs.find(tab => tab.attributes['aria-current'] === 'true').dataset.tab, 'q1');
+    assert.equal(p.body.classList.contains('tutorial-embed'), false);
+  }
+  const p = page(false, '?question=q3');
+  assert.equal(p.get('q3').style.display, 'block');
+  assert.equal(p.body.classList.contains('tutorial-embed'), false);
+  assert.equal(page().body.classList.contains('tutorial-embed'), false);
 });
 
 test('authored TeX renders Q2 selections, Q3 models/table, results and workings with numeric fallbacks', () => {

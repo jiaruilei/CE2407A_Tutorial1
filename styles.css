@@ -16,6 +16,9 @@ input[type=radio]{accent-color:var(--accent);width:17px;height:17px;margin:0}
 textarea{min-height:70px;resize:vertical}
 label{color:#27364b;font-size:16px;font-weight:600}
 .shell{width:min(1480px,100%);margin:auto;overflow:hidden;border:1px solid #e2e8f0;border-radius:22px;background:var(--panel);box-shadow:var(--shadow)}
+body.tutorial-embed{padding:0;background:#fff}
+.tutorial-embed .shell{width:100%;margin:0;border:0;border-radius:0;box-shadow:none}
+.tutorial-embed .page-header{display:none}
 .page-header{padding:22px 24px 0;border-bottom:1px solid var(--line)}
 .course-label{margin:0 0 5px;color:var(--accent);font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase}
 h1{margin:0;font-size:clamp(28px,3vw,36px);line-height:1.15;letter-spacing:-.025em}

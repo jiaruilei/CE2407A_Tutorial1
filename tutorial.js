@@ -1,19 +1,24 @@
 // Navigation
 const tabs = document.querySelectorAll('.tab-btn');
+function activateQuestion(question) {
+  const selected = [...tabs].find(tab => tab.dataset.tab === question);
+  if (!selected) return false;
+  tabs.forEach(tab => {
+    tab.classList.toggle('active', tab === selected);
+    tab.setAttribute('aria-current', tab === selected ? 'true' : 'false');
+  });
+  document.querySelectorAll('main section').forEach(section => {
+    section.style.display = section.id === question ? 'block' : 'none';
+  });
+  if (question === 'q2') renderQ2();
+  const chartId = `${question}chart`, chart = chartDrawings.get(chartId);
+  if (chart) drawBars(chartId, chart.labels, chart.values, chart.title);
+  globalThis.TutorialMath?.typeset?.(document.getElementById(question));
+  return true;
+}
 tabs.forEach(btn => {
   btn.setAttribute('aria-current', btn.classList.contains('active') ? 'true' : 'false');
-  btn.addEventListener('click', () => {
-    tabs.forEach(tab => {
-      tab.classList.toggle('active', tab === btn);
-      tab.setAttribute('aria-current', tab === btn ? 'true' : 'false');
-    });
-    document.querySelectorAll('main section').forEach(section => {
-      section.style.display = section.id === btn.dataset.tab ? 'block' : 'none';
-    });
-    if (btn.dataset.tab === 'q2') renderQ2();
-    const chartId = `${btn.dataset.tab}chart`, chart = chartDrawings.get(chartId);
-    if (chart) drawBars(chartId, chart.labels, chart.values, chart.title);
-  });
+  btn.addEventListener('click', () => activateQuestion(btn.dataset.tab));
 });
 
 const byId = id => document.getElementById(id);
@@ -411,3 +416,10 @@ globalThis.addEventListener?.('resize', () => {
   renderQ2();
   chartDrawings.forEach(({ labels, values, title }, id) => drawBars(id, labels, values, title));
 });
+
+// Apply deep links after the controls and charts are ready, before chat.js
+// reads aria-current to choose its initial question and conversation.
+const tutorialQuery = new URLSearchParams(globalThis.location?.search || '');
+document.body.classList.toggle('tutorial-embed', tutorialQuery.get('embed') === '1');
+const requestedQuestion = tutorialQuery.get('question');
+if (/^q[1-7]$/.test(requestedQuestion || '')) activateQuestion(requestedQuestion);

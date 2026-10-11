@@ -96,7 +96,7 @@ test('default Q3 and Q7 values match the independent-event calculations', () => 
   p.click('q7calc');
   for (const value of ['0.98', '0.26', '0.848']) assert.ok(p.get('q7out').textContent.includes(value));
   assert.equal(p.get('q7chart').getContext().fills.length, 3);
-  assert.match(p.get('q7chart').attributes['aria-label'], /A only: 5.6%; B only: 7.2%; Both: 72%/);
+  assert.match(p.get('q7chart').attributes['aria-label'], /A only: 5.6%\. B only: 7.2%\. Both: 72%/);
 });
 
 test('equivalent Q3 expressions are accepted, malformed and wrong expressions are rejected', () => {

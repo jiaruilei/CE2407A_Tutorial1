@@ -81,7 +81,7 @@
       const selected = currentRoute.includes(Number(city));
       return `<g><circle cx="${x}" cy="${y}" r="21" fill="${selected ? '#eff6ff' : 'white'}" stroke="${selected ? '#2563eb' : '#64748b'}" stroke-width="${selected ? 3 : 1.5}"/><text x="${x}" y="${y + 6}" text-anchor="middle" font-size="19" font-weight="600" fill="#142033">${city}</text></g>`;
     }).join('');
-    get('q1network').innerHTML = `<title id="q1-network-title">Highways from city 1 to city 9</title><desc id="q1-network-desc">Arrows give travel direction; labels give possible times in hours. Highlighted route: ${routeLabel(currentRoute)}.</desc><defs><marker id="q1arrow-base" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><marker id="q1arrow-active" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/></marker></defs>${links}${nodes}`;
+    get('q1network').innerHTML = `<title id="q1-network-title">Highways from city 1 to city 9</title><desc id="q1-network-desc">Arrows give travel direction. Labels give possible times in hours. Highlighted route: ${routeLabel(currentRoute)}.</desc><defs><marker id="q1arrow-base" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><marker id="q1arrow-active" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/></marker></defs>${links}${nodes}`;
   }
   function updateRoute() {
     const last = currentRoute[currentRoute.length - 1], choices = nextCities(last);

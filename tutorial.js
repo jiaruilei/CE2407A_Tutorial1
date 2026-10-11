@@ -285,7 +285,7 @@ function drawBars(canvasId, labels, values, title) {
   g.clearRect(0, 0, width, height);
   g.font = canvasFont(canvas, 16);
   setText(`${canvasId}-title`, title);
-  canvas.setAttribute('aria-label', `${title}. ${labels.map((label, i) => `${label}: ${pct(values[i])}`).join('; ')}.`);
+  canvas.setAttribute('aria-label', `${title}. ${labels.map((label, i) => `${label}: ${pct(values[i])}`).join('. ')}.`);
   chartDrawings.set(canvasId, { labels, values, title });
   g.strokeStyle = '#dce4ee'; g.beginPath(); g.moveTo(pad, height - pad); g.lineTo(width - pad, height - pad); g.stroke();
   values.forEach((value, i) => {
@@ -408,7 +408,7 @@ on('q7reset', 'click', () => {
 });
 on('q7qCheck', 'click', () => {
   const value = chosen('q7quiz');
-  showPill('q7qRes', !value ? 'Select true or false.' : `${value === 'F' ? 'Correct.' : 'Try again.'} “Exactly one” is an outcome; both detectors can detect together.`);
+  showPill('q7qRes', !value ? 'Select true or false.' : `${value === 'F' ? 'Correct.' : 'Try again.'} “Exactly one” is an outcome. Both detectors can detect together.`);
 });
 ['q4quiz', 'q7quiz'].forEach(name => document.querySelectorAll(`input[name=${name}]`).forEach(input => {
   input.addEventListener('change', () => hidePill(name === 'q4quiz' ? 'q4qRes' : 'q7qRes'));

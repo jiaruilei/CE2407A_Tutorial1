@@ -28,7 +28,7 @@
   </header>
   <main>
     <section id="q1" aria-labelledby="q1title">
-      <div class="section-heading"><h2 id="q1title">Highway routes &amp; travel times</h2><p>Travel from city 1 to city 9. Follow the arrows; edge labels give possible times in hours.</p></div>
+      <div class="section-heading"><h2 id="q1title">Highway routes &amp; travel times</h2><p>Travel from city 1 to city 9. Follow the arrows. Edge labels give possible times in hours.</p></div>
       <div class="workspace">
         <div class="controls">
           <h3>(a) Find the sample space</h3>
@@ -45,14 +45,14 @@
         </div>
         <div class="visual-panel">
           <div class="panel-title"><h3>Highway network</h3><span id="q1-highlight" role="status">Route: 1</span></div>
-          <div class="plot network-wrap" tabindex="0" role="region" aria-label="Highway network; scroll horizontally on a small screen"><svg id="q1network" viewBox="0 0 730 430" role="img" aria-labelledby="q1-network-title q1-network-desc" xmlns="http://www.w3.org/2000/svg"></svg></div>
+          <div class="plot network-wrap" tabindex="0" role="region" aria-label="Highway network. Scroll horizontally on a small screen."><svg id="q1network" viewBox="0 0 730 430" role="img" aria-labelledby="q1-network-title q1-network-desc" xmlns="http://www.w3.org/2000/svg"></svg></div>
           <div class="card results-card q1-time-card"><h3>Travel times</h3><div id="q1-time-results" class="out" role="status">Calculate the possible travel times.</div><details><summary>Working</summary><div id="q1-combinations" class="table-scroll"></div></details></div>
         </div>
       </div>
     </section>
 
     <section id="q2" aria-labelledby="q2title" style="display:none">
-      <div class="section-heading"><h2 id="q2title">Wind speed &amp; direction</h2><p><span data-tex="V\ge 0\,\mathrm{mph}">V ≥ 0 mph</span>; <span data-tex="0^\circ\le\theta\le90^\circ">0° ≤ θ ≤ 90°</span>. Select events to compare their regions.</p></div>
+      <div class="section-heading"><h2 id="q2title">Wind speed &amp; direction</h2><p><span data-tex="V\ge 0\,\mathrm{mph}">V ≥ 0 mph</span> and <span data-tex="0^\circ\le\theta\le90^\circ">0° ≤ θ ≤ 90°</span>. Select events to compare their regions.</p></div>
       <div class="workspace wind-layout">
         <div class="controls">
           <h3>Events</h3>
@@ -74,7 +74,7 @@
         </div>
         <div class="visual-panel">
           <div class="panel-title"><h3>Sample space</h3><span id="q2selection" role="status">No events selected</span></div>
-          <div class="plot"><canvas id="polar" width="520" height="420" role="img" aria-label="Wind sample space: speed is radial distance; direction is measured from east towards north."></canvas></div>
+          <div class="plot"><canvas id="polar" width="520" height="420" role="img" aria-label="Wind sample space: speed is radial distance. Direction is measured from east towards north."></canvas></div>
         </div>
       </div>
     </section>
@@ -89,7 +89,7 @@
             <label for="q3a_m"><span data-tex="M=">M =</span></label><input id="q3a_m" type="text" autocomplete="off" aria-label="Expression for M">
             <label for="q3a_u"><span data-tex="U=">U =</span></label><input id="q3a_u" type="text" autocomplete="off" aria-label="Expression for U">
           </div>
-          <p class="syntax">Type: <code>E1, E2, H; ^c, ∩, ∪, Δ</code>.</p>
+          <p class="syntax">Type: <code>E1, E2, H, ^c, ∩, ∪, Δ</code>.</p>
           <div class="actions"><button id="q3aCheck">Check</button><button id="q3aShow" class="secondary">Show answer</button></div>
           <div class="feedback" id="q3aout" role="status">Enter your event expressions.</div>
           <div class="control-section"><h3>(b) &amp; (c) Probabilities</h3>
@@ -104,7 +104,7 @@
       </div>
     </section>
     <section id="q4" aria-labelledby="q4title" style="display:none">
-      <div class="section-heading"><h2 id="q4title">Pollution &amp; Bayes’ theorem</h2><p>Processes A–D run in the ratio 2:4:3:1. <span data-tex="F">F</span>: pollution; <span data-tex="K">K</span>: fish kill.</p></div>
+      <div class="section-heading"><h2 id="q4title">Pollution &amp; Bayes’ theorem</h2><p>Processes A–D run in the ratio 2:4:3:1. <span data-tex="F">F</span>: pollution · <span data-tex="K">K</span>: fish kill.</p></div>
       <div class="workspace">
         <div class="controls"><h3>Probabilities · A, B, C, D</h3>
           <div class="stacked-fields"><label for="q4prior"><span data-tex="P(i)">P(i)</span></label><input id="q4prior" type="text" value="0.2,0.4,0.3,0.1" spellcheck="false"><label for="q4poll"><span data-tex="P(F\mid i)">P(F | i)</span></label><input id="q4poll" type="text" value="0.40,0.05,0.30,0.10" spellcheck="false"><label for="q4kill"><span data-tex="P(K\mid F,i)">P(K | F, i)</span></label><input id="q4kill" type="text" value="0.9,0.1,0.8,0.3" spellcheck="false"></div>
@@ -206,7 +206,7 @@
       <h2 class="coach-title" id="coachTitle"><span class="coach-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M4 4h16v12H9l-5 4V4Z"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M8 8h8M8 12h5"/></svg></span>Prof. Gary’s AI Proxy</h2>
       <span class="coach-status" id="coachStatus" role="status">Checking server…</span>
     </div>
-    <div class="coach-toolbar"><span id="coachContext">Q1 · Routes</span><button type="button" id="coachClear" class="secondary">Clear chat</button></div>
+    <div class="coach-toolbar"><button type="button" id="coachClear" class="secondary">Clear chat</button></div>
     <div class="coach-log" id="coachLog" role="log" aria-live="polite" aria-label="Tutorial conversation"></div>
     <div class="coach-chips" aria-label="Suggested questions">
       <button type="button" data-question="Explain the key idea in this question briefly.">Explain the idea</button>

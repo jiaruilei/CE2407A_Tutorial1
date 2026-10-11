@@ -156,14 +156,11 @@
     function render() {
       if (math?.setText) math.setText(log, ''); else log.textContent = '';
       const s = state();
-      if (!s.messages.length) appendMessage({ role: 'assistant', content: 'Ask about the current question, or choose a prompt below.' });
       s.messages.forEach(appendMessage);
       if (s.pending) appendMessage({ role: 'pending', content: 'Thinking…' });
       const result = math?.typeset?.(log);
       Promise.resolve(result).catch(() => {}).finally(() => { log.scrollTop = log.scrollHeight; });
       log.scrollTop = log.scrollHeight;
-      const tab = tabs.find(item => item.getAttribute('data-tab') === active);
-      if (get('coachContext')) get('coachContext').textContent = tab?.textContent || active.toUpperCase();
       input.placeholder = `Ask about ${active.toUpperCase()}…`;
       status();
     }

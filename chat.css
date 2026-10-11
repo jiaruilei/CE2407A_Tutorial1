@@ -7,7 +7,7 @@
 .coach-status{display:inline-flex;align-items:center;gap:6px;color:#5d6b7d;font-size:12px;white-space:nowrap}
 .coach-status::before{width:8px;height:8px;flex-shrink:0;border-radius:50%;background:#f59e0b;content:""}
 .coach-status.online::before{background:#10b981}
-.coach-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;color:var(--muted);font-size:13px}
+.coach-toolbar{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-bottom:10px}
 .coach-toolbar button{padding:5px 9px;min-height:32px;font-size:12px}
 .coach-log{height:340px;overflow:auto;overscroll-behavior:contain;padding:12px;border:1px solid #d7e2ef;border-radius:11px;background:#fff}
 .coach-message{width:fit-content;max-width:88%;margin:0 0 9px;padding:9px 11px;border-radius:11px;font-size:16px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}

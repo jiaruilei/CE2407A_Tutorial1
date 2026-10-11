@@ -46,7 +46,7 @@ function fixture(options = {}) {
   }
   const chips = add('chips'); chips.className = 'coach-chips';
   add('chip', 'button', { 'data-question': 'Explain the formula.' }, chips);
-  for (const id of ['coachLog', 'coachStatus', 'coachContext', 'coachSend', 'coachClear']) add(id);
+  for (const id of ['coachLog', 'coachStatus', 'coachSend', 'coachClear']) add(id);
   add('coachForm', 'form'); add('coachQuestion', 'textarea');
   if (options.meta) add('apiMeta', 'meta', { name: 'tutorial-api-base', content: options.meta });
   const doc = {

@@ -1,803 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CE2407A – Interactive Tutorial Game (Q2, Q3, Q4, Q7) + Rule‑Based AI Coach</title>
-  <style>
-    :root{
-      --bg:#0b1220; --panel:#121a2b; --panel2:#0f1626; --ink:#e9f0ff; --muted:#a9b6d3; --accent:#66d9e8; --ok:#7ce38b; --warn:#ffd166; --bad:#ff6b6b;
-    }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(180deg,#0a0f1c 0%,#0e1830 100%);color:var(--ink)}
-    header{position:sticky;top:0;background:rgba(10,15,28,.7);backdrop-filter: blur(8px);border-bottom:1px solid #1e2a46;z-index:2}
-    .wrap{max-width:1100px;margin:0 auto;padding:14px 20px}
-    h1{font-size:20px;margin:0}
-    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-    .tab-btn{padding:10px 14px;border-radius:14px;background:#101933;border:1px solid #1e2a46;color:var(--muted);cursor:pointer}
-    .tab-btn.active{color:var(--ink);border-color:#2a3b67;background:linear-gradient(180deg,#101d3a,#0e1830)}
-    main{max-width:1100px;margin:18px auto;padding:0 20px 70px}
-    .card{background:linear-gradient(180deg,#0f172a,#0e1526);border:1px solid #1f2a4a;border-radius:18px;padding:18px;margin:16px 0;box-shadow:0 10px 30px rgba(0,0,0,.25)}
-    .grid{display:grid;gap:16px}
-    .g2{grid-template-columns:1.2fr .8fr}
-    @media(max-width:900px){.g2{grid-template-columns:1fr}}
-    h2{margin:0 0 8px 0;font-size:18px}
-    h3{margin:6px 0 8px 0;font-size:15px;color:var(--muted)}
-    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    button{border:1px solid #28406e;background:#0f1c36;color:var(--ink);padding:9px 12px;border-radius:12px;cursor:pointer}
-    button:hover{border-color:#3c5d9c}
-    .secondary{color:var(--muted)}
-    .hint{color:var(--muted);font-size:14px}
-    .out{font-family:ui-monospace,Consolas,monospace;background:#0a1223;border:1px solid #22345d;border-radius:12px;padding:10px;white-space:pre-wrap}
-    .good{color:var(--ok)}
-    .bad{color:var(--bad)}
-    .kv{display:grid;grid-template-columns:180px 1fr;gap:8px;align-items:center}
-    input[type="number"]{width:120px;padding:8px;border-radius:10px;border:1px solid #2c4273;background:#0c1a33;color:var(--ink)}
-    input[type="text"]{width:100%;padding:8px;border-radius:10px;border:1px solid #2c4273;background:#0c1a33;color:var(--ink)}
-    label{font-size:14px;color:var(--muted)}
-    .pill{display:inline-flex;gap:6px;align-items:center;background:#0b1730;border:1px solid #20345f;padding:6px 10px;border-radius:999px;font-size:12px;color:var(--muted)}
-    .mc li{margin:6px 0}
-    .mc input{transform:translateY(1px)}
-    canvas{background:#0a1223;border:1px solid #213662;border-radius:14px}
-    .footer{opacity:.8;font-size:12px;margin-top:8px;text-align:center}
-    .kbd{font-family:ui-monospace,Consolas,monospace;background:#0c1a33;border:1px solid #304a7f;border-radius:8px;padding:2px 6px}
-    .tbl{width:100%;border-collapse:collapse}
-    .tbl th,.tbl td{border:1px solid #22345d;padding:8px;text-align:center;font-family:ui-monospace,Consolas,monospace}
-    .badge{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid #2c4273;font-size:12px;color:#a9b6d3}
-
-    /* AI coach */
-    .coach{border:1px solid #22345d;border-radius:14px;background:linear-gradient(180deg,#0c1326,#0a1223);padding:10px;margin-top:10px}
-    .coach .bar{display:flex;gap:8px;align-items:center;justify-content:space-between}
-    .coach small{color:var(--muted)}
-    .coach .msgs{height:180px;overflow:auto;border:1px solid #22345d;border-radius:12px;padding:10px;margin-top:8px;background:#0a1020}
-    .coach .msg{margin:6px 0;line-height:1.35}
-    .coach .me{color:#c5e4ff}
-    .coach .bot{color:#a0f0b5}
-    .coach textarea{width:100%;min-height:42px;padding:8px;border-radius:10px;border:1px solid #2c4273;background:#0c1a33;color:var(--ink)}
-    .coach .row2{display:flex;gap:8px;margin-top:8px}
-    .coach .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
-    .coach .chip{font-size:12px;border-radius:999px;border:1px solid #2c4273;padding:4px 8px;background:#0b1730;cursor:pointer}
-    .coach .chip:hover{border-color:#3c5d9c}
-  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CE2407A Tutorial 1: interactive exercises on sets, independence, total probability and Bayes' theorem.">
+  <title>CE2407A · Tutorial 1</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header>
-    <div class="wrap">
-      <h1>CE2407A Interactive Tutorial – Sets & Probability</h1>
-      <div class="tabs" id="tabs">
-        <button class="tab-btn active" data-tab="q2">Q2 · Wind sample space</button>
-        <button class="tab-btn" data-tab="q3">Q3 · Power plant reliability</button>
-        <button class="tab-btn" data-tab="q4">Q4 · Pollution & Bayes</button>
-        <button class="tab-btn" data-tab="q7">Q7 · Two detectors</button>
-      </div>
-      <div class="footer">Try tweaking the inputs for an interactive learning experience. Press <span class="kbd">?</span> to toggle hints.</div>
-    </div>
+<div class="shell">
+  <header class="page-header">
+    <p class="course-label">CE2407A · Uncertainty Analysis for Engineers</p>
+    <h1>Tutorial 1 <span>Sets &amp; probability</span></h1>
+    <nav class="tabs" id="tabs" aria-label="Tutorial questions">
+      <button class="tab-btn active" data-tab="q2" aria-controls="q2" aria-current="true">Q2 · Wind</button>
+      <button class="tab-btn" data-tab="q3" aria-controls="q3">Q3 · Power plant</button>
+      <button class="tab-btn" data-tab="q4" aria-controls="q4">Q4 · Pollution</button>
+      <button class="tab-btn" data-tab="q7" aria-controls="q7">Q7 · Detectors</button>
+    </nav>
   </header>
-
   <main>
-    <!-- Q2 (fixed labels & mph scale) -->
-    <section id="q2" class="card">
-      <div class="grid g2">
-        <div>
-          <h2>Q2 · Wind speed & direction (polar sample space)</h2>
-          <p class="hint">Ticks start at <b>20 mph</b> (then 30, 40, …). θ ranges 0°→90°. Overlay events and explore ∪/∩/complements.</p>
-          <div class="row" style="gap:8px;margin:8px 0 12px 0;flex-wrap:wrap">
-            <button data-draw="A">Show A: V &gt; 20</button>
-            <button data-draw="B">Show B: 12 &lt; V ≤ 30</button>
-            <button data-draw="C">Show C: θ ≤ 30°</button>
-            <button data-draw="Ac">Show A<sup>c</sup></button>
-            <button data-draw="D">D = A ∩ C</button>
-            <button data-draw="E">E = A ∪ B</button>
-            <button data-draw="F">F = A ∩ B ∩ C</button>
-            <button id="q2clear" class="secondary">Clear overlays</button>
+    <section id="q2" aria-labelledby="q2title">
+      <div class="section-heading"><h2 id="q2title">Wind speed &amp; direction</h2><p>V ≥ 0 mph; 0° ≤ θ ≤ 90°. Select events to compare their regions.</p></div>
+      <div class="workspace wind-layout">
+        <div class="controls">
+          <h3>Events</h3>
+          <div class="event-grid">
+            <button class="secondary" data-draw="A" aria-pressed="false"><b>A</b><span>V &gt; 20</span></button>
+            <button class="secondary" data-draw="B" aria-pressed="false"><b>B</b><span>12 &lt; V ≤ 30</span></button>
+            <button class="secondary" data-draw="C" aria-pressed="false"><b>C</b><span>θ ≤ 30°</span></button>
+            <button class="secondary" data-draw="Ac" aria-pressed="false"><b>A<sup>c</sup></b><span>V ≤ 20</span></button>
+            <button class="secondary" data-draw="D" aria-pressed="false"><b>D</b><span>A ∩ C</span></button>
+            <button class="secondary" data-draw="E" aria-pressed="false"><b>E</b><span>A ∪ B</span></button>
+            <button class="secondary" data-draw="F" aria-pressed="false"><b>F</b><span>A ∩ B ∩ C</span></button>
+            <button id="q2clear" class="secondary">Clear</button>
           </div>
-          <canvas id="polar" width="520" height="420"></canvas>
-        </div>
-        <div>
-          <h3>Concept checks</h3>
-          <ol class="mc">
-            <li>
-              <label><input type="radio" name="q2a" value="yes"> D and E are mutually exclusive.</label><br>
-              <label><input type="radio" name="q2a" value="no"> D and E are not mutually exclusive.</label>
-            </li>
-            <li style="margin-top:8px">
-              <label><input type="radio" name="q2b" value="yes"> A and C are mutually exclusive.</label><br>
-              <label><input type="radio" name="q2b" value="no"> A and C are not mutually exclusive.</label>
-            </li>
-          </ol>
-          <div class="row" style="margin-top:6px"><button id="q2check">Check answers</button><span id="q2res" class="pill" style="display:none"></span></div>
-          <p class="hint">Mutually exclusive ⇔ intersection is empty.</p>
-
-          <!-- AI Coach for Q2 -->
-          <div class="coach" id="coach-q2">
-            <div class="bar"><small>AI Coach — Q2 reasoning & set relations</small></div>
-            <div class="chips">
-              <span class="chip" data-prompt="q2" data-text="Explain why D ⊆ E, using A, B, C.">Explain why D ⊆ E</span>
-              <span class="chip" data-prompt="q2" data-text="Give a hint for the mutually exclusive questions without revealing the answer.">Hint (mutual exclusivity)</span>
-              <span class="chip" data-prompt="q2" data-text="Check my quiz choices.">Check my quiz choices</span>
-            </div>
-            <div class="msgs" id="msgs-q2"></div>
-            <div class="row2">
-              <textarea id="ask-q2" placeholder="Ask about A,B,C,D,E,F, unions/intersections…"></textarea>
-              <button data-send="q2">Send</button>
-            </div>
+          <div class="control-section"><h3>Mutually exclusive?</h3>
+            <fieldset class="choice-row"><legend>D and E</legend><label><input type="radio" name="q2a" value="yes"> Yes</label><label><input type="radio" name="q2a" value="no"> No</label></fieldset>
+            <fieldset class="choice-row"><legend>A and C</legend><label><input type="radio" name="q2b" value="yes"> Yes</label><label><input type="radio" name="q2b" value="no"> No</label></fieldset>
+            <div class="actions"><button id="q2check">Check answers</button><span id="q2res" class="pill" role="status" style="display:none"></span></div>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- Q3 -->
-    <section id="q3" class="card" style="display:none">
-      <h2>Q3 · Power plant reliability — story, sets, and computation</h2>
-      <details open><summary><span class="badge">Story</span> Problem context</summary>
-        <p class="hint">A power plant has two generation units (1 & 2). Weekly outage probabilities: <b>P(E₁)=0.01</b>, <b>P(E₂)=0.02</b>. During summer, <b>P(H)=0.10</b> for a hot week. Assume E₁, E₂, H are mutually independent.</p>
-        <ul class="hint">
-          <li><b>S</b> (satisfactory): both units functioning and not hot.</li>
-          <li><b>M</b> (marginal): exactly one unit down and not hot.</li>
-          <li><b>U</b> (unsatisfactory): otherwise.</li>
-        </ul>
-      </details>
-
-      <div class="grid g2">
-        <div>
-          <h3>(a) Define the events using H, E₁, E₂</h3>
-          <div class="out" id="q3aout">Fill the expressions, then <b>Check</b>.</div>
-          <div class="kv" style="margin-top:8px">
-            <label>S =</label><input id="q3a_s" type="text" placeholder="e.g., H^c ∩ E1^c ∩ E2^c">
-            <label>M =</label><input id="q3a_m" type="text" placeholder="e.g., H^c ∩ (E1 Δ E2)">
-            <label>U =</label><input id="q3a_u" type="text" placeholder="e.g., (S ∪ M)^c">
-          </div>
-          <div class="row" style="margin-top:8px">
-            <button id="q3aCheck">Check</button>
-            <button id="q3aShow" class="secondary">Show model answer</button>
-          </div>
-          <p class="hint">Use symbols: <code>H^c</code> for complement, <code>∩</code> for intersection, <code>∪</code> for union, <code>Δ</code> for symmetric difference (exactly one).</p>
-
-          <!-- AI Coach for Q3 -->
-          <div class="coach" id="coach-q3">
-            <div class="bar"><small>AI Coach — Q3 sets, independence & probabilities</small></div>
-            <div class="chips">
-              <span class="chip" data-prompt="q3" data-text="Check my (a) S/M/U definitions.">Check my (a) definitions</span>
-              <span class="chip" data-prompt="q3" data-text="Walk me through part (b) without numbers.">Walk me through (b)</span>
-              <span class="chip" data-prompt="q3" data-text="Explain S/M/U intuitively.">Explain S/M/U</span>
-            </div>
-            <div class="msgs" id="msgs-q3"></div>
-            <div class="row2">
-              <textarea id="ask-q3" placeholder="Ask about event algebra or the computations…"></textarea>
-              <button data-send="q3">Send</button>
-            </div>
-          </div>
-        </div>
-        <div>
-          <h3>Outcome visualizer (truth table)</h3>
-          <table class="tbl">
-            <thead><tr><th>E₁</th><th>E₂</th><th>H</th><th>Classification</th></tr></thead>
-            <tbody id="q3tbl"></tbody>
-          </table>
-          <p class="hint">Hover the table to see why each row maps to S/M/U.</p>
-        </div>
-      </div>
-
-      <hr style="border-color:#1f2a4a;border-width:1px 0 0;margin:16px 0">
-
-      <div class="grid g2">
-        <div>
-          <h3>Inputs (you can tweak)</h3>
-          <div class="kv">
-            <label>p₁ = P(E₁):</label><input id="p1" type="number" value="0.01" step="0.001" min="0" max="1">
-            <label>p₂ = P(E₂):</label><input id="p2" type="number" value="0.02" step="0.001" min="0" max="1">
-            <label>P(H) (hot):</label><input id="ph" type="number" value="0.10" step="0.01" min="0" max="1">
-          </div>
-          <div class="row" style="margin-top:10px">
-            <button id="q3calc">Compute parts (b) & (c)</button>
-            <button id="q3reset" class="secondary">Reset</button>
-          </div>
-        </div>
-        <div>
-          <h3>Results</h3>
-          <div class="out" id="q3out">(b) P(exactly one unit out) = ?
-(c) P(S), P(M), P(U) = ?</div>
-          <details style="margin-top:8px"><summary>Show step‑by‑step derivations</summary>
-            <div class="out" id="q3steps"></div>
+        <div class="visual-panel">
+          <div class="panel-title"><h3>Sample space</h3><span id="q2selection" role="status">No events selected</span></div>
+          <div class="plot"><canvas id="polar" width="520" height="420" role="img" aria-label="Wind sample space: speed is radial distance; direction is measured from east towards north."></canvas></div>
+          <details class="coach" id="coach-q2"><summary>Hints</summary>
+            <div class="chips"><button class="chip" data-prompt="q2" data-text="Explain why D ⊆ E.">D ⊆ E</button><button class="chip" data-prompt="q2" data-text="Give a hint for mutual exclusivity.">Mutual exclusivity</button><button class="chip" data-prompt="q2" data-text="Check my quiz choices.">Check choices</button></div>
+            <div class="msgs" id="msgs-q2" role="log" aria-label="Q2 hints"></div><div class="row2"><textarea id="ask-q2" aria-label="Ask about Q2" placeholder="Ask about the events…"></textarea><button data-send="q2">Ask</button></div>
           </details>
         </div>
       </div>
     </section>
-
-    <!-- Q4 -->
-    <section id="q4" class="card" style="display:none">
-      <h2>Q4 · Pollution, total probability & Bayes — interactive</h2>
-      <details open><summary><span class="badge">Story</span> Problem context</summary>
-        <p class="hint">Four processes (A–D) operate in the proportions <b>2:4:3:1</b> ⇒ priors (0.2, 0.4, 0.3, 0.1). Each has a probability of causing dangerous pollution. If pollution occurs, each has a different probability of causing a fish kill. We assume weeks are i.i.d.</p>
-        <ol class="hint" style="margin-top:6px">
-          <li>(a) Compute <b>P(no dangerous pollution)</b> this week.</li>
-          <li>(b) Given pollution is detected, find <b>P(A | pollution)</b>.</li>
-          <li>(c) Compute overall <b>P(fish kill)</b>.</li>
-          <li>(d) Identify the <b>single process</b> whose improvement most reduces fish‑kill risk (largest contribution).</li>
-        </ol>
-      </details>
-
-      <div class="grid g2">
-        <div>
-          <h3>Inputs</h3>
-          <div class="kv">
-            <label>Prior P(A,B,C,D):</label><input id="q4prior" value="0.2,0.4,0.3,0.1">
-            <label>P(pollute | A..D):</label><input id="q4poll" value="0.40,0.05,0.30,0.10">
-            <label>P(kill | pollution, A..D):</label><input id="q4kill" value="0.9,0.1,0.8,0.3">
+    <section id="q3" aria-labelledby="q3title" style="display:none">
+      <div class="section-heading"><h2 id="q3title">Power plant reliability</h2><p>E₁, E₂: unit outages. H: hot weather. The three events are mutually independent.</p></div>
+      <div class="workspace">
+        <div class="controls">
+          <h3>(a) Define the operating states</h3>
+          <p class="brief">S: both units work, not hot.<br>M: one unit down, not hot.<br>U: all other outcomes.</p>
+          <div class="kv expressions">
+            <label for="q3a_s">S =</label><input id="q3a_s" type="text" autocomplete="off" aria-label="Expression for S">
+            <label for="q3a_m">M =</label><input id="q3a_m" type="text" autocomplete="off" aria-label="Expression for M">
+            <label for="q3a_u">U =</label><input id="q3a_u" type="text" autocomplete="off" aria-label="Expression for U">
           </div>
-          <div class="row" style="margin-top:10px">
-            <button id="q4calc">Compute (a)–(d)</button>
-            <button id="q4reset" class="secondary">Reset</button>
-          </div>
-
-          <h3 style="margin-top:14px">(d) Process Improvement Challenge</h3>
-          <div class="kv">
-            <label>Choose process to tune:</label>
-            <select id="q4which">
-              <option value="0">A</option>
-              <option value="1">B</option>
-              <option value="2">C</option>
-              <option value="3">D</option>
-            </select>
-            <label>New P(pollute | chosen):</label>
-            <input id="q4tune" type="number" step="0.01" min="0" max="1" value="0.20">
-          </div>
-          <div class="row" style="margin-top:8px">
-            <button id="q4apply">Apply & compare P(fish kill)</button>
-            <span id="q4delta" class="pill" style="display:none"></span>
-          </div>
-
-          <!-- AI Coach for Q4 -->
-          <div class="coach" id="coach-q4" style="margin-top:14px">
-            <div class="bar"><small>AI Coach — Q4 total probability & Bayes</small></div>
-            <div class="chips">
-              <span class="chip" data-prompt="q4" data-text="Check (a)–(c) with my inputs.">Check (a)–(c)</span>
-              <span class="chip" data-prompt="q4" data-text="Explain why the best process is chosen in (d).">Why that process in (d)?</span>
-              <span class="chip" data-prompt="q4" data-text="Give one conceptual hint.">Conceptual hint</span>
-            </div>
-            <div class="msgs" id="msgs-q4"></div>
-            <div class="row2">
-              <textarea id="ask-q4" placeholder="Ask about priors, likelihoods, Bayes, or sensitivity…"></textarea>
-              <button data-send="q4">Send</button>
-            </div>
+          <p class="syntax">Notation: E1, E2, H; ^c, ∩, ∪, Δ.</p>
+          <div class="actions"><button id="q3aCheck">Check</button><button id="q3aShow" class="secondary">Show answer</button></div>
+          <div class="feedback" id="q3aout" role="status">Enter your event expressions.</div>
+          <div class="control-section"><h3>(b) &amp; (c) Probabilities</h3>
+            <div class="kv"><label for="p1">P(E₁)</label><input id="p1" type="number" value="0.01" step="0.001" min="0" max="1"><label for="p2">P(E₂)</label><input id="p2" type="number" value="0.02" step="0.001" min="0" max="1"><label for="ph">P(H)</label><input id="ph" type="number" value="0.10" step="0.01" min="0" max="1"></div>
+            <div class="actions"><button id="q3calc">Calculate</button><button id="q3reset" class="secondary">Reset</button></div>
           </div>
         </div>
-
-        <div>
-          <h3>Results</h3>
-          <div class="out" id="q4out">Click <b>Compute</b> to evaluate parts (a)–(d).</div>
-          <canvas id="q4chart" width="360" height="180" style="margin-top:8px;background:#0a1223;border:1px solid #22345d;border-radius:12px"></canvas>
-          <details style="margin-top:8px"><summary>Show step‑by‑step derivations</summary>
-            <div class="out" id="q4steps"></div>
-          </details>
-
-          <details style="margin-top:8px"><summary>(quiz) Which process contributes most to fish‑kill risk?</summary>
-            <div style="margin-top:6px">
-              <label><input type="radio" name="q4quiz" value="A"> A</label>
-              <label style="margin-left:12px"><input type="radio" name="q4quiz" value="B"> B</label>
-              <label style="margin-left:12px"><input type="radio" name="q4quiz" value="C"> C</label>
-              <label style="margin-left:12px"><input type="radio" name="q4quiz" value="D"> D</label>
-              <button id="q4qCheck" style="margin-left:12px">Check</button>
-              <span id="q4qRes" class="pill" style="display:none"></span>
-            </div>
-          </details>
+        <div class="visual-panel">
+          <div class="card"><h3>Operating states</h3><table class="tbl"><thead><tr><th scope="col">Unit 1</th><th scope="col">Unit 2</th><th scope="col">Weather</th><th scope="col">State</th></tr></thead><tbody id="q3tbl"></tbody></table></div>
+          <div class="card results-card"><h3>Results</h3><div class="out" id="q3out" role="status">Calculate to find P(exactly one outage) and P(S), P(M), P(U).</div><details><summary>Working</summary><div class="out" id="q3steps"></div></details></div>
+          <details class="coach" id="coach-q3"><summary>Hints</summary><div class="chips"><button class="chip" data-prompt="q3" data-text="Check my definitions.">Check definitions</button><button class="chip" data-prompt="q3" data-text="Explain part b without numbers.">Exactly one outage</button><button class="chip" data-prompt="q3" data-text="Explain S/M/U intuitively.">Operating states</button></div><div class="msgs" id="msgs-q3" role="log" aria-label="Q3 hints"></div><div class="row2"><textarea id="ask-q3" aria-label="Ask about Q3" placeholder="Ask about states or probabilities…"></textarea><button data-send="q3">Ask</button></div></details>
         </div>
       </div>
     </section>
-
-    <!-- Q7 -->
-    <section id="q7" class="card" style="display:none">
-      <h2>Q7 · Two detectors (independent) — interactive</h2>
-      <details open><summary><span class="badge">Story</span> Problem context</summary>
-        <p class="hint">Two independent detectors, A and B. Let P(A) and P(B) be detection probabilities. If exactly one detects, location can still be wrong; if both detect, location is assumed correct.</p>
-        <ul class="hint">
-          <li>(a) Compute <b>P(detected by ≥ 1)</b>.</li>
-          <li>(b) Compute <b>P(detected by only one)</b>.</li>
-          <li>(c) Compute <b>P(accurately located)</b> given accuracies by case.</li>
-        </ul>
-      </details>
-
-      <div class="grid g2">
-        <div>
-          <h3>Inputs</h3>
-          <div class="kv">
-            <label>P(A detects):</label><input id="qa" type="number" value="0.8" step="0.01" min="0" max="1">
-            <label>P(B detects):</label><input id="qb" type="number" value="0.9" step="0.01" min="0" max="1">
-            <label>P(accurate | A‑only):</label><input id="qaccA" type="number" value="0.7" step="0.01" min="0" max="1">
-            <label>P(accurate | B‑only):</label><input id="qaccB" type="number" value="0.4" step="0.01" min="0" max="1">
-          </div>
-          <div class="row" style="margin-top:10px">
-            <button id="q7calc">Compute (a)–(c)</button>
-            <button id="q7reset" class="secondary">Reset</button>
-          </div>
-
-          <details style="margin-top:10px"><summary>(quiz) Concept check</summary>
-            <div style="margin-top:6px">
-              <span class="hint">Is “only one detects” the same as “A and B are mutually exclusive events”?</span><br>
-              <label><input type="radio" name="q7quiz" value="T"> True</label>
-              <label style="margin-left:12px"><input type="radio" name="q7quiz" value="F"> False</label>
-              <button id="q7qCheck" style="margin-left:12px">Check</button>
-              <span id="q7qRes" class="pill" style="display:none"></span>
-            </div>
-          </details>
-
-          <!-- AI Coach for Q7 -->
-          <div class="coach" id="coach-q7">
-            <div class="bar"><small>AI Coach — Q7 independence & accuracy</small></div>
-            <div class="chips">
-              <span class="chip" data-prompt="q7" data-text="Check my (a)–(c) values.">Check (a)–(c)</span>
-              <span class="chip" data-prompt="q7" data-text="Explain why “only one” ≠ mutual exclusivity.">Only one ≠ mutually exclusive</span>
-              <span class="chip" data-prompt="q7" data-text="Give a next‑step hint.">Next‑step hint</span>
-            </div>
-            <div class="msgs" id="msgs-q7"></div>
-            <div class="row2">
-              <textarea id="ask-q7" placeholder="Ask about inclusion‑exclusion, only‑one vs both, etc."></textarea>
-              <button data-send="q7">Send</button>
-            </div>
-          </div>
+    <section id="q4" aria-labelledby="q4title" style="display:none">
+      <div class="section-heading"><h2 id="q4title">Pollution &amp; Bayes’ theorem</h2><p>Processes A–D run in the ratio 2:4:3:1. Find pollution and fish-kill probabilities.</p></div>
+      <div class="workspace">
+        <div class="controls"><h3>Probabilities · A, B, C, D</h3>
+          <div class="stacked-fields"><label for="q4prior">P(process)</label><input id="q4prior" type="text" value="0.2,0.4,0.3,0.1" spellcheck="false"><label for="q4poll">P(pollution | process)</label><input id="q4poll" type="text" value="0.40,0.05,0.30,0.10" spellcheck="false"><label for="q4kill">P(fish kill | pollution, process)</label><input id="q4kill" type="text" value="0.9,0.1,0.8,0.3" spellcheck="false"></div>
+          <div class="actions"><button id="q4calc">Calculate</button><button id="q4reset" class="secondary">Reset</button></div>
+          <div class="control-section"><h3>(d) Reduce pollution</h3><div class="kv"><label for="q4which">Process</label><select id="q4which"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select><label for="q4tune">New P(pollution)</label><input id="q4tune" type="number" step="0.01" min="0" max="1" value="0.20"></div><div class="actions"><button id="q4apply" class="secondary">Compare fish-kill risk</button></div><span id="q4delta" class="pill" role="status" style="display:none"></span></div>
         </div>
-
-        <div>
-          <h3>Results</h3>
-          <div class="out" id="q7out">Click <b>Compute</b> to evaluate (a)–(c).</div>
-          <canvas id="q7chart" width="360" height="180" style="margin-top:8px;background:#0a1223;border:1px solid #22345d;border-radius:12px"></canvas>
-          <details style="margin-top:8px"><summary>Show step‑by‑step derivations</summary>
-            <div class="out" id="q7steps"></div>
-          </details>
+        <div class="visual-panel">
+          <div class="card results-card"><h3>Results</h3><div class="out" id="q4out" role="status">Calculate to evaluate (a)–(d).</div></div>
+          <div class="card chart-card"><h3 id="q4chart-title">Fish-kill contribution by process</h3><canvas id="q4chart" width="520" height="260" role="img" aria-label="Each process's contribution to total fish-kill probability."></canvas></div>
+          <details class="disclosure"><summary>Working</summary><div class="out" id="q4steps"></div></details>
+          <details class="disclosure"><summary>Check: largest fish-kill contribution?</summary><fieldset class="choice-row"><legend class="sr-only">Choose a process with the largest contribution</legend><label><input type="radio" name="q4quiz" value="A"> A</label><label><input type="radio" name="q4quiz" value="B"> B</label><label><input type="radio" name="q4quiz" value="C"> C</label><label><input type="radio" name="q4quiz" value="D"> D</label></fieldset><div class="actions"><button id="q4qCheck">Check</button><span id="q4qRes" class="pill" role="status" style="display:none"></span></div></details>
+          <details class="coach" id="coach-q4"><summary>Hints</summary><div class="chips"><button class="chip" data-prompt="q4" data-text="Check (a)–(c) with my inputs.">Total probability</button><button class="chip" data-prompt="q4" data-text="Explain why the best process is chosen in (d).">Compare processes</button><button class="chip" data-prompt="q4" data-text="Give one conceptual hint.">Probability tree</button></div><div class="msgs" id="msgs-q4" role="log" aria-label="Q4 hints"></div><div class="row2"><textarea id="ask-q4" aria-label="Ask about Q4" placeholder="Ask about Bayes or pollution…"></textarea><button data-send="q4">Ask</button></div></details>
+        </div>
+      </div>
+    </section>
+    <section id="q7" aria-labelledby="q7title" style="display:none">
+      <div class="section-heading"><h2 id="q7title">Two independent detectors</h2><p>Either detector can detect the object. If both detect it, its location is accurate.</p></div>
+      <div class="workspace">
+        <div class="controls"><h3>Detection &amp; accuracy</h3>
+          <div class="kv"><label for="qa">P(A detects)</label><input id="qa" type="number" value="0.8" step="0.01" min="0" max="1"><label for="qb">P(B detects)</label><input id="qb" type="number" value="0.9" step="0.01" min="0" max="1"><label for="qaccA">P(accurate | A only)</label><input id="qaccA" type="number" value="0.7" step="0.01" min="0" max="1"><label for="qaccB">P(accurate | B only)</label><input id="qaccB" type="number" value="0.4" step="0.01" min="0" max="1"></div>
+          <div class="actions"><button id="q7calc">Calculate</button><button id="q7reset" class="secondary">Reset</button></div>
+          <div class="control-section"><h3>Concept check</h3><p class="brief">“Only one detects” means A and B are mutually exclusive.</p><fieldset class="choice-row"><legend class="sr-only">True or false?</legend><label><input type="radio" name="q7quiz" value="T"> True</label><label><input type="radio" name="q7quiz" value="F"> False</label></fieldset><div class="actions"><button id="q7qCheck" class="secondary">Check</button><span id="q7qRes" class="pill" role="status" style="display:none"></span></div></div>
+        </div>
+        <div class="visual-panel">
+          <div class="card results-card"><h3>Results</h3><div class="out" id="q7out" role="status">Calculate to find P(at least one), P(only one), and P(accurate).</div></div>
+          <div class="card chart-card"><h3 id="q7chart-title">Accurate-location contributions</h3><canvas id="q7chart" width="520" height="260" role="img" aria-label="Contributions to accurate-location probability from A only, B only, and both detectors."></canvas></div>
+          <details class="disclosure"><summary>Working</summary><div class="out" id="q7steps"></div></details>
+          <details class="coach" id="coach-q7"><summary>Hints</summary><div class="chips"><button class="chip" data-prompt="q7" data-text="Check my (a)–(c) values.">Check probabilities</button><button class="chip" data-prompt="q7" data-text="Explain only one versus mutual exclusivity.">Only one vs. exclusive</button><button class="chip" data-prompt="q7" data-text="Give a next-step hint.">Next step</button></div><div class="msgs" id="msgs-q7" role="log" aria-label="Q7 hints"></div><div class="row2"><textarea id="ask-q7" aria-label="Ask about Q7" placeholder="Ask about detection or accuracy…"></textarea><button data-send="q7">Ask</button></div></details>
         </div>
       </div>
     </section>
   </main>
-
-  <script>
-    // --- Tabs
-    const tabs=document.querySelectorAll('.tab-btn');
-    tabs.forEach(btn=>btn.addEventListener('click',()=>{
-      tabs.forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-      document.querySelectorAll('main section').forEach(s=>s.style.display='none');
-      document.getElementById(btn.dataset.tab).style.display='block';
-    }));
-
-    // --- Q2 drawing (with mph mapping + label offsets)
-    const polar = document.getElementById('polar');
-    const ctx = polar.getContext('2d');
-    const W = polar.width, H = polar.height;
-    const origin = {x: 80, y: H-80};
-    const R = Math.min(W-120, H-120);
-    const PX_PER_MPH = 4; function m2px(m){ return m*PX_PER_MPH; }
-
-    function clearBase(){
-      ctx.clearRect(0,0,W,H);
-      // axes
-      ctx.strokeStyle = '#28406e'; ctx.lineWidth=1.2;
-      ctx.beginPath(); ctx.moveTo(origin.x, origin.y); ctx.lineTo(origin.x + R + 10, origin.y); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(origin.x, origin.y); ctx.lineTo(origin.x, origin.y - R - 10); ctx.stroke();
-      // labels (moved to avoid overlap)
-      ctx.fillStyle = '#a9b6d3'; ctx.font = '12px ui-monospace';
-      ctx.fillText('x = V cosθ (east)', origin.x + R - 40, origin.y + 30);
-      ctx.fillText('y = V sinθ (north)', origin.x - 50, origin.y - R);
-      // radial ticks start at 20 mph
-      for(let mph=20; mph<=Math.floor(R/PX_PER_MPH); mph+=10){
-        const r = m2px(mph);
-        ctx.beginPath(); ctx.arc(origin.x, origin.y, r, -Math.PI/2, 0);
-        ctx.strokeStyle='#1f325d'; ctx.setLineDash([4,4]); ctx.stroke(); ctx.setLineDash([]);
-        ctx.fillText(mph + ' mph', origin.x + r - 24, origin.y + 12);
-      }
-      // 30° line
-      ctx.strokeStyle='#304b80'; ctx.beginPath(); const a = -Math.PI/6;
-      ctx.moveTo(origin.x, origin.y); ctx.lineTo(origin.x + R*Math.cos(a), origin.y + R*Math.sin(a)); ctx.stroke();
-      // title
-      ctx.fillStyle='#d7e3ff'; ctx.font='14px Inter, system-ui, sans-serif';
-      ctx.fillText('Sample space: 0° ≤ θ ≤ 90°, V ≥ 0 (ticks: 20,30,40,…) ', 20, 22);
-    }
-
-    function sector(color, rMin, rMax, tMinDeg, tMaxDeg, alpha=0.35){
-      const tmin = (-tMaxDeg*Math.PI/180), tmax = (-tMinDeg*Math.PI/180);
-      ctx.fillStyle=color; ctx.globalAlpha=alpha; ctx.beginPath();
-      ctx.moveTo(origin.x + rMin*Math.cos(tmin), origin.y + rMin*Math.sin(tmin));
-      ctx.arc(origin.x, origin.y, rMax, tmin, tmax, false);
-      ctx.lineTo(origin.x + rMin*Math.cos(tmax), origin.y + rMin*Math.sin(tmax));
-      ctx.arc(origin.x, origin.y, rMin, tmax, tmin, true);
-      ctx.closePath(); ctx.fill(); ctx.globalAlpha=1;
-    }
-
-    function drawA(){ sector('#66d9e8', m2px(20), R, 0, 90); }
-    function drawB(){ sector('#7ce38b', m2px(12), m2px(30), 0, 90); }
-    function drawC(){ sector('#ffd166', 0, R, 0, 30); }
-    function drawAc(){ sector('#ff6b6b', 0, m2px(20), 0, 90, 0.25); }
-    function drawD(){ sector('#b38cff', m2px(20), R, 0, 30); }
-    function drawE(){ drawA(); drawB(); }
-    function drawF(){ sector('#e879f9', m2px(20), m2px(30), 0, 30); }
-
-    function renderBase(){ clearBase(); }
-    if(ctx) renderBase();
-    document.querySelectorAll('[data-draw]')?.forEach(btn=>btn.addEventListener('click',()=>{
-      const k = btn.dataset.draw; ({A:drawA,B:drawB,C:drawC,Ac:drawAc,D:drawD,E:drawE,F:drawF}[k])?.();
-    }));
-    document.getElementById('q2clear')?.addEventListener('click', renderBase);
-
-    // --- Q2 check button pill
-    document.getElementById('q2check')?.addEventListener('click',()=>{
-      const a = [...document.querySelectorAll('input[name=q2a]')].find(x=>x.checked)?.value;
-      const b = [...document.querySelectorAll('input[name=q2b]')].find(x=>x.checked)?.value;
-      const pill = document.getElementById('q2res'); if(!pill) return; pill.style.display='inline-flex';
-      const okA = (a==='no'); const okB = (b==='no');
-      if(!a || !b){ pill.textContent='Answer both first.'; return; }
-      pill.textContent = `Q1: ${okA?'✓':'✗'}  Q2: ${okB?'✓':'✗'}`;
-    });
-
-    // --- Q3 helpers
-    const sanitize = s => (s||'').replace(/\s+/g,'').toUpperCase();
-    function checkA(){
-      const s = sanitize(document.getElementById('q3a_s').value);
-      const m = sanitize(document.getElementById('q3a_m').value);
-      const u = sanitize(document.getElementById('q3a_u').value);
-      const okS = s === 'H^C∩E1^C∩E2^C' || s === 'E1^C∩E2^C∩H^C';
-      const okM = m === 'H^C∩(E1ΔE2)' || m === '(E1ΔE2)∩H^C';
-      const okU = u === '(S∪M)^C';
-      const msg = `S: ${okS?'✅':'❌'}  M: ${okM?'✅':'❌'}  U: ${okU?'✅':'❌'}`;
-      document.getElementById('q3aout').textContent = msg + (okS&&okM&&okU?'  — Looks good!':'  — Adjust and try again.');
-    }
-    function showA(){
-      document.getElementById('q3a_s').value = 'H^c ∩ E1^c ∩ E2^c';
-      document.getElementById('q3a_m').value = 'H^c ∩ (E1 Δ E2)';
-      document.getElementById('q3a_u').value = '(S ∪ M)^c';
-      checkA();
-    }
-    document.getElementById('q3aCheck')?.addEventListener('click', checkA);
-    document.getElementById('q3aShow')?.addEventListener('click', showA);
-
-    // Build truth table for S/M/U mapping
-    const rows=[]; // eight combinations
-    const vals=[0,1];
-    for(const e1 of vals){ for(const e2 of vals){ for(const h of vals){
-      const S = (!e1 && !e2 && !h);
-      const M = (!!(e1^e2) && !h);
-      const cls = S?'S' : (M?'M':'U');
-      rows.push({e1,e2,h,cls});
-    }}};
-    const q3tbl = document.getElementById('q3tbl');
-    if(q3tbl){
-      q3tbl.innerHTML = rows.map(r=>`<tr title="${r.cls==='S'?'both working & not hot':(r.cls==='M'?'exactly one down & not hot':'otherwise')}"><td>${r.e1? 'E₁':'E₁^c'}</td><td>${r.e2? 'E₂':'E₂^c'}</td><td>${r.h? 'H':'H^c'}</td><td>${r.cls}</td></tr>`).join('');
-    }
-
-    // --- Q3 computations
-    function pct(x){ return (Math.round(x*100000)/1000)+'%'; }
-    function fix(x){ return Math.round(x*100000)/100000; }
-
-    function q3Compute(){
-      const p1 = Number(document.getElementById('p1').value);
-      const p2 = Number(document.getElementById('p2').value);
-      const ph = Number(document.getElementById('ph').value);
-      const out = document.getElementById('q3out');
-      if([p1,p2,ph].some(x=>!(x>=0&&x<=1))){ out.innerHTML='<span class="bad">Inputs must be between 0 and 1.</span>'; return; }
-      const p_notH = 1-ph;
-      const p_none = (1-p1)*(1-p2);
-      const p_exactOne = p1*(1-p2) + (1-p1)*p2;
-      const S = p_none * p_notH;
-      const M = p_exactOne * p_notH;
-      const U = 1 - (S + M);
-
-      out.innerHTML = [
-        `(b) P(exactly one unit out) = ${fix(p_exactOne)} (${pct(p_exactOne)})`,
-        `(c) P(S) = ${fix(S)} (${pct(S)}),  P(M) = ${fix(M)} (${pct(M)}),  P(U) = ${fix(U)} (${pct(U)})`
-      ].join('\n');
-
-      const steps = [
-        `Exact one outage = E₁⊕E₂ = p₁(1−p₂) + (1−p₁)p₂ = ${p1}×${fix(1-p2)} + ${fix(1-p1)}×${p2} = ${fix(p_exactOne)}`,
-        `S = E₁^c ∩ E₂^c ∩ H^c ⇒ P(S) = (1−p₁)(1−p₂)(1−P(H)) = ${fix(p_none)}×${fix(p_notH)} = ${fix(S)}`,
-        `M = (E₁⊕E₂) ∩ H^c ⇒ P(M) = ${fix(p_exactOne)}×${fix(p_notH)} = ${fix(M)}`,
-        `U = 1 − [P(S)+P(M)] = ${fix(U)}`
-      ].join('\n');
-      document.getElementById('q3steps').textContent = steps;
-    }
-    document.getElementById('q3calc')?.addEventListener('click', q3Compute);
-    document.getElementById('q3reset')?.addEventListener('click',()=>{
-      document.getElementById('p1').value='0.01';
-      document.getElementById('p2').value='0.02';
-      document.getElementById('ph').value='0.10';
-      document.getElementById('q3out').textContent='(b) P(exactly one unit out) = ?\n(c) P(S), P(M), P(U) = ?';
-      document.getElementById('q3steps').textContent='';
-      document.getElementById('q3a_s').value='';
-      document.getElementById('q3a_m').value='';
-      document.getElementById('q3a_u').value='';
-      document.getElementById('q3aout').textContent='Fill the expressions, then Check.';
-    });
-
-    // --- Q4
-    function toNums(str){ return str.split(',').map(s=>Number(s.trim())).filter(x=>!Number.isNaN(x)); }
-    function drawBars(canvasId, labels, values){
-      const c = document.getElementById(canvasId); if(!c) return; const g=c.getContext('2d');
-      g.clearRect(0,0,c.width,c.height);
-      const W=c.width, H=c.height, pad=28; const n=values.length; const max=Math.max(1e-9,...values);
-      const bw = (W-2*pad)/n * 0.6; const gap = (W-2*pad)/n * 0.4;
-      g.fillStyle = '#a9b6d3'; g.font='12px ui-monospace'; g.fillText('Contribution to fish‑kill (by process)', pad, 14);
-      values.forEach((v,i)=>{
-        const x = pad + i*((bw+gap)) + gap*0.5; const h = (H-3*pad)*(v/max);
-        g.fillStyle = '#66d9e8'; g.fillRect(x, H-pad-h, bw, h);
-        g.fillStyle = '#a9b6d3'; g.fillText(labels[i], x + bw/2 - 4, H-8);
-      });
-    }
-    let q4_state = { prior:[0.2,0.4,0.3,0.1], poll:[0.40,0.05,0.30,0.10], kill:[0.9,0.1,0.8,0.3], contrib:[0,0,0,0], best:'A', pKill:0 };
-
-    function q4Compute(){
-      const prior = toNums(document.getElementById('q4prior').value);
-      const poll = toNums(document.getElementById('q4poll').value);
-      const kill = toNums(document.getElementById('q4kill').value);
-      const out = document.getElementById('q4out');
-      const steps = document.getElementById('q4steps');
-      if(prior.length!==4||poll.length!==4||kill.length!==4){ out.innerHTML='<span class="bad">Please provide 4 comma‑separated numbers for each line.</span>'; return; }
-      const sPrior = prior.reduce((a,b)=>a+b,0);
-      if(Math.abs(sPrior-1)>1e-6){ out.innerHTML='<span class="bad">Priors must sum to 1.</span>'; return; }
-      const pNo = prior.map((pi,i)=> pi*(1-poll[i])).reduce((a,b)=>a+b,0);
-      const pYes = 1 - pNo;
-      const pA_given_yes = (prior[0]*poll[0]) / pYes;
-      const contrib = prior.map((pi,i)=> pi*poll[i]*kill[i]);
-      const pKill = contrib.reduce((a,b)=>a+b,0);
-      const labels = ['A','B','C','D'];
-      const bestIdx = contrib.indexOf(Math.max(...contrib));
-      q4_state = { prior, poll, kill, contrib, best: labels[bestIdx], pKill };
-
-      out.textContent = [
-        `(a) P(no dangerous pollution) = ${fix(pNo)} (${pct(pNo)})`,
-        `(b) P(A | pollution detected) = ${fix(pA_given_yes)} (${pct(pA_given_yes)})`,
-        `(c) P(fish kill) = ${fix(pKill)} (${pct(pKill)})`,
-        `(d) Most fruitful single process to improve: ${labels[bestIdx]} (largest contribution to fish‑kill risk)`
-      ].join('\n');
-
-      steps.textContent = [
-        `P(no pollution) = Σ_i P(i)·[1−P(pollute|i)]`,
-        `P(pollution) = 1 − P(no pollution)`,
-        `P(A|pollution) = P(A)P(pollute|A) / P(pollution)`,
-        `P(fish kill) = Σ_i P(i)·P(pollute|i)·P(kill|pollution,i)`,
-        `Contribution of i = P(i)·P(pollute|i)·P(kill|pollution,i)`
-      ].join('\n');
-
-      drawBars('q4chart', labels, contrib);
-      // reset quiz display
-      const qres = document.getElementById('q4qRes'); if(qres){ qres.style.display='none'; qres.textContent=''; }
-      document.getElementById('q4delta').style.display='none';
-    }
-    document.getElementById('q4calc')?.addEventListener('click', q4Compute);
-    document.getElementById('q4reset')?.addEventListener('click',()=>{
-      document.getElementById('q4prior').value='0.2,0.4,0.3,0.1';
-      document.getElementById('q4poll').value='0.40,0.05,0.30,0.10';
-      document.getElementById('q4kill').value='0.9,0.1,0.8,0.3';
-      document.getElementById('q4out').textContent='Click Compute to evaluate parts (a)–(d).';
-      document.getElementById('q4steps').textContent='';
-      const c = document.getElementById('q4chart'); c?.getContext('2d')?.clearRect(0,0,c.width,c.height);
-      const qres = document.getElementById('q4qRes'); if(qres){ qres.style.display='none'; qres.textContent=''; }
-      document.getElementById('q4delta').style.display='none';
-    });
-    // Quiz check
-    document.getElementById('q4qCheck')?.addEventListener('click',()=>{
-      const val = [...document.querySelectorAll('input[name=q4quiz]')].find(x=>x.checked)?.value;
-      const pill = document.getElementById('q4qRes'); if(!pill) return;
-      pill.style.display='inline-flex';
-      if(!val){ pill.textContent='Select an option.'; return; }
-      pill.textContent = (val===q4_state.best) ? 'Correct!' : `Not quite. It\'s ${q4_state.best}.`;
-    });
-    // Improvement scenario
-    document.getElementById('q4apply')?.addEventListener('click',()=>{
-      const which = Number(document.getElementById('q4which').value);
-      const newp = Number(document.getElementById('q4tune').value);
-      if(!(newp>=0&&newp<=1)) return;
-      const poll = q4_state.poll.slice(); poll[which]=newp;
-      const contrib2 = q4_state.prior.map((pi,i)=> pi*poll[i]*q4_state.kill[i]);
-      const pKill2 = contrib2.reduce((a,b)=>a+b,0);
-      drawBars('q4chart', ['A','B','C','D'], contrib2);
-      const pill = document.getElementById('q4delta');
-      pill.style.display='inline-flex';
-      const d = pKill2 - q4_state.pKill; const sign = d>0?'+':'';
-      pill.textContent = `New P(fish kill) = ${fix(pKill2)} (${pct(pKill2)})  |  Δ ${sign}${fix(d)} (${sign}${pct(d)})`;
-    });
-
-    // --- Q7
-    function drawBarsQ7(canvasId, labels, values){
-      const c = document.getElementById(canvasId); if(!c) return; const g=c.getContext('2d');
-      g.clearRect(0,0,c.width,c.height);
-      const W=c.width, H=c.height, pad=28; const n=values.length; const max=Math.max(1e-9,...values);
-      const bw = (W-2*pad)/n * 0.6; const gap = (W-2*pad)/n * 0.4;
-      g.fillStyle = '#a9b6d3'; g.font='12px ui-monospace'; g.fillText('Components of accurate location', pad, 14);
-      values.forEach((v,i)=>{
-        const x = pad + i*((bw+gap)) + gap*0.5; const h = (H-3*pad)*(v/max);
-        g.fillStyle = '#7ce38b'; g.fillRect(x, H-pad-h, bw, h);
-        g.fillStyle = '#a9b6d3'; g.fillText(labels[i], x + bw/2 - 16, H-8);
-      });
-    }
-
-    function q7Compute(){
-      const pa = Number(document.getElementById('qa').value);
-      const pb = Number(document.getElementById('qb').value);
-      const accA = Number(document.getElementById('qaccA').value);
-      const accB = Number(document.getElementById('qaccB').value);
-      const out = document.getElementById('q7out');
-      const steps = document.getElementById('q7steps');
-      if([pa,pb,accA,accB].some(x=>!(x>=0&&x<=1))){ out.innerHTML='<span class="bad">Inputs must be between 0 and 1.</span>'; return; }
-      const pNone = (1-pa)*(1-pb);
-      const pAtLeastOne = 1 - pNone;
-      const pAonly = pa*(1-pb);
-      const pBonly = pb*(1-pa);
-      const pOnlyOne = pAonly + pBonly;
-      const pBoth = pa*pb;
-      const pAccurate = pAonly*accA + pBonly*accB + pBoth*1;
-
-      out.textContent = [
-        `(a) P(detected by ≥ 1) = ${fix(pAtLeastOne)} (${pct(pAtLeastOne)})`,
-        `(b) P(detected by only one) = ${fix(pOnlyOne)} (${pct(pOnlyOne)})`,
-        `(c) P(accurately located) = ${fix(pAccurate)} (${pct(pAccurate)})`
-      ].join('\n');
-
-      steps.textContent = [
-        `At least one = 1 − P(none) = 1 − (1−P(A))(1−P(B))`,
-        `Only one = P(A)(1−P(B)) + (1−P(A))P(B)`,
-        `Accurate = P(A only)·P(acc|A only) + P(B only)·P(acc|B only) + P(A∩B)·1`
-      ].join('\n');
-
-      drawBarsQ7('q7chart', ['A only','B only','Both'], [pAonly*accA, pBonly*accB, pBoth*1]);
-      const pill = document.getElementById('q7qRes'); if(pill){ pill.style.display='none'; pill.textContent=''; }
-    }
-    document.getElementById('q7calc')?.addEventListener('click', q7Compute);
-    document.getElementById('q7reset')?.addEventListener('click',()=>{
-      document.getElementById('qa').value='0.8';
-      document.getElementById('qb').value='0.9';
-      document.getElementById('qaccA').value='0.7';
-      document.getElementById('qaccB').value='0.4';
-      document.getElementById('q7out').textContent='Click Compute to evaluate (a)–(c).';
-      document.getElementById('q7steps').textContent='';
-      const c = document.getElementById('q7chart'); c?.getContext('2d')?.clearRect(0,0,c.width,c.height);
-      const pill = document.getElementById('q7qRes'); if(pill){ pill.style.display='none'; pill.textContent=''; }
-    });
-    // Quiz check
-    document.getElementById('q7qCheck')?.addEventListener('click',()=>{
-      const val = [...document.querySelectorAll('input[name=q7quiz]')].find(x=>x.checked)?.value;
-      const pill = document.getElementById('q7qRes'); if(!pill) return; pill.style.display='inline-flex';
-      if(!val){ pill.textContent='Select true/false.'; return; }
-      pill.textContent = (val==='F') ? 'Correct: "only one" refers to the outcome, not the relationship between A and B.' : 'Not quite: A and B need not be mutually exclusive.';
-    });
-
-    // --- AI Coach core (purely local heuristic tutor; no network / API)
-    const coachMsgs = { q2:[], q3:[], q4:[], q7:[] };
-
-    function getQ2State(){
-      const a1=[...document.querySelectorAll('input[name=q2a]')].find(x=>x.checked)?.value||'(no choice)';
-      const a2=[...document.querySelectorAll('input[name=q2b]')].find(x=>x.checked)?.value||'(no choice)';
-      return {
-        radios:{Q1:a1,Q2:a2},
-        facts:{
-          A:'V>20', B:'12<V≤30', C:'θ≤30°', D:'A∩C', E:'A∪B', F:'A∩B∩C',
-          correct:{ q1:'no', q2:'no' }
-        }
-      };
-    }
-    function getQ3State(){
-      return {
-        inputs:{ p1:+document.getElementById('p1').value, p2:+document.getElementById('p2').value, ph:+document.getElementById('ph').value },
-        defs:{ S:document.getElementById('q3a_s').value, M:document.getElementById('q3a_m').value, U:document.getElementById('q3a_u').value },
-        last: document.getElementById('q3out').innerText
-      };
-    }
-    function getQ4State(){
-      return {
-        prior: document.getElementById('q4prior').value,
-        poll: document.getElementById('q4poll').value,
-        kill: document.getElementById('q4kill').value,
-        results: document.getElementById('q4out').innerText,
-        best: (window.q4_state||{}).best
-      };
-    }
-    function getQ7State(){
-      return {
-        pa:+document.getElementById('qa').value,
-        pb:+document.getElementById('qb').value,
-        accA:+document.getElementById('qaccA').value,
-        accB:+document.getElementById('qaccB').value,
-        results: document.getElementById('q7out').innerText
-      };
-    }
-
-    function localTutor(section, userText){
-      try{
-        if(section==='q2'){
-          const st=getQ2State();
-          if(/check/i.test(userText)){
-            return `Your choices → Q1: ${st.radios.Q1}, Q2: ${st.radios.Q2}.\nRemember: D=A∩C and E=A∪B. Since D⊆A⊆E, D∩E=D≠∅ ⇒ not mutually exclusive. Also A and C can overlap when V>20 & θ≤30°. So both answers should be "no".`;
-          }
-          if(/why.*D.*subset.*E|D.*⊆.*E/i.test(userText)){
-            return 'E is A∪B and D is A∩C. Any outcome in D is in A, hence also in A∪B. Therefore D⊆E.';
-          }
-          if(/hint|exclusive|mutual/i.test(userText)){
-            return 'Hint: To test mutual exclusivity, sketch or imagine the intersection. If you can exhibit any point with V>20 and θ≤30°, it lies in A∩C, so A and C are not disjoint.';
-          }
-          return 'Try writing D=A∩C and E=A∪B, then test if an element of D must be in E. For mutual exclusivity, check if intersections are empty.';
-        }
-        if(section==='q3'){
-          const st=getQ3State();
-          if(/check.*\(a\)|definitions?|S.*M.*U/i.test(userText)){
-            const sOK = /H\^c.*E1\^c.*E2\^c/i.test(st.defs.S);
-            const mOK = /H\^c.*(E1.*Δ.*E2|E1\s*Δ\s*E2)/i.test(st.defs.M);
-            const uOK = /\(\s*S\s*∪\s*M\s*\)\s*\^c/i.test(st.defs.U);
-            return `Checks — S: ${sOK?'✓':'✗'}, M: ${mOK?'✓':'✗'}, U: ${uOK?'✓':'✗'}. Hint: S=H^c∩E1^c∩E2^c; M=H^c∩(E1ΔE2); U=(S∪M)^c.`;
-          }
-          if(/part.*b|exact(ly)? one/i.test(userText)){
-            return 'Use E₁⊕E₂: p₁(1−p₂)+(1−p₁)p₂. Independence is not needed for (b).';
-          }
-          if(/explain.*S.*M.*U|intuitive/i.test(userText)){
-            return 'S: both units up and not hot. M: exactly one down and not hot. U: anything else (including hot weeks).';
-          }
-          if(/compute|numbers|verify/i.test(userText)){
-            const {p1,p2,ph}=st.inputs;
-            if([p1,p2,ph].some(x=>!(x>=0&&x<=1))) return 'Make sure p₁, p₂, P(H) are in [0,1].';
-            const p_notH=1-ph, p_none=(1-p1)*(1-p2), p_exactOne=p1*(1-p2)+(1-p1)*p2;
-            const S=p_none*p_notH, M=p_exactOne*p_notH, U=1-(S+M);
-            return `With p₁=${p1}, p₂=${p2}, P(H)=${ph} → P(exactly one)=${fix(p_exactOne)}, then P(S)=${fix(S)}, P(M)=${fix(M)}, P(U)=${fix(U)}.`;
-          }
-          return 'State your p₁, p₂, P(H) and your (a) definitions; I will check and hint.';
-        }
-        if(section==='q4'){
-          const st=getQ4State();
-          if(/check|verify|a\).*c\)/i.test(userText)){
-            return `Use: P(no poll)=ΣP(i)[1−P(p|i)], P(A|poll)=P(A)P(p|A)/P(poll), P(kill)=ΣP(i)P(p|i)P(k|p,i). The largest contributor in (d) is the process with max P(i)P(p|i)P(k|p,i) — currently ${st.best||'(? compute first )'}.`;
-          }
-          if(/why.*best|explain.*best|why that process/i.test(userText)){
-            return 'Improving the process with the largest contribution P(i)·P(pollute|i)·P(kill|pollution,i) yields the biggest immediate reduction in overall fish‑kill probability.';
-          }
-          if(/hint|concept/i.test(userText)){
-            return 'Think of a two‑stage tree: choose process i with prior P(i), then pollution with P(p|i), then fish‑kill with P(k|p,i). Multiply along branches; sum over i.';
-          }
-          return 'Compute (a)–(c) first (click Compute), then compare contributions P(i)·P(p|i)·P(k|p,i) for (d).';
-        }
-        if(section==='q7'){
-          const st=getQ7State();
-          if(/check|verify|values|a\).*c\)/i.test(userText)){
-            return `Use: ≥1 = 1−(1−pA)(1−pB); only one = pA(1−pB)+(1−pA)pB; accurate = pA(1−pB)·accA + pB(1−pA)·accB + pA pB. With your inputs A=${st.pa}, B=${st.pb}, accA=${st.accA}, accB=${st.accB}.`;
-          }
-          if(/only one.*mutual|exclusive/i.test(userText)){
-            return '“Only one detects” describes an outcome of a trial. A and B themselves are not mutually exclusive; independence allows P(A∩B)=P(A)P(B)>0.';
-          }
-          if(/hint|next/i.test(userText)){
-            return 'Compute p(A only), p(B only), and p(A∩B) separately. Then: (a) add the last two + both; (b) add only‑one terms; (c) weight each piece by its accuracy.';
-          }
-          return 'Ask me to check your (a)–(c) setup or to explain only‑one vs mutual exclusivity.';
-        }
-      }catch(e){ return 'I could not parse the current state, but I can still help conceptually. What are you stuck on?'; }
-    }
-
-    function addMsg(boxId, who, text){
-      const box = document.getElementById(boxId); if(!box) return;
-      const div = document.createElement('div');
-      div.className = `msg ${who==='you'?'me':'bot'}`;
-      div.textContent = (who==='you'? 'You: ' : 'Coach: ') + text;
-      box.appendChild(div); box.scrollTop = box.scrollHeight;
-    }
-
-    function handleAsk(section){
-      const input = document.getElementById(`ask-${section}`);
-      const msgsId = `msgs-${section}`;
-      const text = (input.value||'').trim(); if(!text) return;
-      addMsg(msgsId,'you',text); input.value='';
-      try{
-        const reply = localTutor(section, text);
-        addMsg(msgsId,'bot',reply);
-      }catch(err){ addMsg(msgsId,'bot', `Sorry — ${err.message}`); }
-    }
-
-    document.querySelectorAll('button[data-send]')?.forEach(btn=>{
-      btn.addEventListener('click',()=> handleAsk(btn.getAttribute('data-send')));
-    });
-    document.querySelectorAll('.chip[data-prompt]')?.forEach(chip=>{
-      chip.addEventListener('click',()=>{
-        const sec = chip.getAttribute('data-prompt');
-        const txt = chip.getAttribute('data-text') || '';
-        const area = document.getElementById(`ask-${sec}`);
-        if(area){ area.value = txt; area.focus(); }
-      });
-    });
-
-    // Keyboard hint toggle
-    let hintsOn=true; document.addEventListener('keydown',e=>{ if(e.key==='?'){ hintsOn=!hintsOn; document.querySelectorAll('.hint').forEach(h=>h.style.display=hintsOn?'block':'none'); }});
-  </script>
+</div>
+<script src="tutorial.js"></script>
 </body>
 </html>
-

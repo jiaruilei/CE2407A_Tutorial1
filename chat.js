@@ -5,9 +5,9 @@
   // HTML, links, extension loading and file/network commands stay plain text.
   const MATH_COMMANDS = new Set(('frac dfrac tfrac binom dbinom tbinom sqrt root over atop choose ' +
     'left right big Big bigg Bigg bigl bigr Bigl Bigr biggl biggr Biggl Biggr ' +
-    'text textrm textbf textit mathrm mathbf mathit mathsf mathtt mathbb mathcal mathfrak boldsymbol ' +
+    'text textrm textbf textit texttt mathrm mathbf mathit mathsf mathtt mathbb mathcal mathfrak boldsymbol operatorname mathop ' +
     'displaystyle textstyle scriptstyle scriptscriptstyle limits nolimits ' +
-    'sum prod coproduct int iint iiint oint lim log ln exp sin cos tan min max inf sup ' +
+    'sum prod coproduct int iint iiint oint lim log ln exp sin cos tan min max inf sup Pr ' +
     'cap cup bigcap bigcup triangle bigtriangleup setminus backslash mid middle vert Vert lvert rvert lVert rVert ' +
     'in notin ni subset subseteq supset supseteq emptyset varnothing complement ' +
     'le leq ge geq lt gt ne neq approx simeq sim equiv propto ll gg not ' +
@@ -16,8 +16,8 @@
     'infty partial nabla forall exists neg land lor wedge vee ' +
     'alpha beta gamma delta epsilon varepsilon zeta eta theta vartheta iota kappa lambda mu nu xi pi rho sigma tau upsilon phi varphi chi psi omega ' +
     'Gamma Delta Theta Lambda Xi Pi Sigma Upsilon Phi Psi Omega ' +
-    'hat widehat bar overline underline tilde widetilde vec dot ddot ' +
-    'quad qquad space thinspace medspace thickspace lbrace rbrace langle rangle ' +
+    'hat widehat bar overline underline underbrace overbrace overset underset substack tilde widetilde vec dot ddot ' +
+    'quad qquad space thinspace medspace thickspace lbrace rbrace langle rangle lceil rceil lfloor rfloor ' +
     'begin end').split(/\s+/));
   const MATH_ENVIRONMENTS = new Set(['aligned', 'alignedat', 'gathered', 'cases', 'matrix', 'pmatrix', 'bmatrix', 'vmatrix', 'Vmatrix', 'smallmatrix', 'array']);
 

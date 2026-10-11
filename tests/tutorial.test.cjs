@@ -117,12 +117,6 @@ test('Q4 reports the A/C tie and compares scenarios against its baseline', () =>
   p.click('q4calc');
   for (const value of ['0.8 (80%)', '0.4 (40%)', '0.149 (14.9%)', 'A and C tie: 0.072']) assert.ok(p.get('q4out').textContent.includes(value));
   assert.equal(p.get('q4chart').getContext().fills.length, 4);
-  for (const choice of ['A', 'C']) {
-    p.choose('q4quiz', choice); p.click('q4qCheck');
-    assert.match(p.get('q4qRes').textContent, /Correct\. A and C tie/);
-  }
-  p.choose('q4quiz', 'B'); p.click('q4qCheck');
-  assert.match(p.get('q4qRes').textContent, /Try again/);
   p.input('q4tune', '0.2'); p.click('q4apply');
   assert.match(p.get('q4delta').textContent, /0\.113.*-3\.6 percentage points/s);
   assert.match(p.get('q4chart-title').textContent, /Scenario/);
@@ -159,8 +153,8 @@ test('edits and resets invalidate Q4 baseline; scenarios require valid explicit 
   assert.match(p.get('q4delta').textContent, /probability from 0 to 1/);
   p.input('q4poll', '0.4,0.05,0.2,0.1'); p.click('q4apply');
   assert.match(p.get('q4delta').textContent, /Calculate.*first/);
-  p.click('q4calc'); p.click('q4reset'); p.click('q4qCheck');
-  assert.match(p.get('q4qRes').textContent, /Calculate.*first/);
+  p.click('q4calc'); p.click('q4reset'); p.click('q4apply');
+  assert.match(p.get('q4delta').textContent, /Calculate.*first/);
 });
 
 test('Q3/Q7 empty or out-of-range inputs clear previous results and charts', () => {

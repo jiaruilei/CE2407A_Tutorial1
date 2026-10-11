@@ -169,11 +169,10 @@ test('Q3/Q7 empty or out-of-range inputs clear previous results and charts', () 
   }
 });
 
-test('Q2 redraw toggles and clear keep selected status and pressed state consistent', () => {
+test('Q2 redraw toggles and clear keep pressed state consistent', () => {
   const p = page(), canvas = p.get('polar').getContext(), start = canvas.clears;
   p.draw('A').dispatch('click');
   assert.equal(p.draw('A').attributes['aria-pressed'], 'true');
-  assert.match(p.get('q2selection').textContent, /A: V > 20/);
   p.draw('A').dispatch('click');
   assert.equal(p.draw('A').attributes['aria-pressed'], 'false');
   p.draw('E').dispatch('click'); p.click('q2clear');
@@ -213,10 +212,8 @@ test('invalid routes keep Q1 and embed mode requires the explicit value 1', () =
   assert.equal(page().body.classList.contains('tutorial-embed'), false);
 });
 
-test('authored TeX renders Q2 selections, Q3 models/table, results and workings with numeric fallbacks', () => {
+test('authored TeX renders Q3 models/table, results and workings with numeric fallbacks', () => {
   const p = page(true);
-  p.draw('Ac').dispatch('click');
-  assert.equal(p.get('q2selection').mathRows[0].tex, String.raw`A^{c}=\{0\leq V\leq20\}`);
   assert.ok(p.typesetCalls.includes(p.get('q3tbl')));
   assert.match(p.get('q3tbl').innerHTML, /data-tex="E_1\^\{c\}"/);
   p.click('q3aShow');

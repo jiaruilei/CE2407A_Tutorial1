@@ -4,6 +4,8 @@ Interactive exercises for all seven questions in Tutorial Set 1, using the CE213
 
 Prof. Gary’s AI Proxy uses the same chat layout as the hydrostatic-pressure lab and follows the selected question, current inputs, and conversation.
 
+Live web service: [ce2407a-tutorial1.onrender.com](https://ce2407a-tutorial1.onrender.com). The GitHub Pages and local copies use this service for chat.
+
 Run locally with Node.js 22 or 24:
 
 ```sh

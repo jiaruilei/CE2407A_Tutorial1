@@ -17,7 +17,19 @@ tabs.forEach(btn => {
 });
 
 const byId = id => document.getElementById(id);
-const setText = (id, text) => { const element = byId(id); if (element) element.textContent = text; };
+const setText = (target, text) => {
+  const element = typeof target === 'string' ? byId(target) : target;
+  if (!element) return;
+  if (globalThis.TutorialMath?.setText) globalThis.TutorialMath.setText(element, text);
+  else element.textContent = text;
+};
+// Only authored TeX and validated numeric results enter the math renderer.
+function setMathLines(target, lines) {
+  const element = typeof target === 'string' ? byId(target) : target;
+  if (!element) return;
+  if (globalThis.TutorialMath?.setLines) globalThis.TutorialMath.setLines(element, lines);
+  else setText(element, lines.map(line => line.text ?? `${line.label ? `${line.label} ` : ''}${line.fallback}`).join('\n'));
+}
 const on = (id, event, handler) => byId(id)?.addEventListener(event, handler);
 const chosen = name => [...document.querySelectorAll(`input[name=${name}]`)].find(input => input.checked)?.value;
 const fix = value => Math.round(value * 100000) / 100000;
@@ -45,11 +57,11 @@ function canvasFont(canvas, preferredSize) {
 }
 function hidePill(id) {
   const pill = byId(id);
-  if (pill) { pill.style.display = 'none'; pill.textContent = ''; }
+  if (pill) { pill.style.display = 'none'; setText(pill, ''); }
 }
 function showPill(id, text) {
   const pill = byId(id);
-  if (pill) { pill.style.display = 'inline-flex'; pill.textContent = text; }
+  if (pill) { pill.style.display = 'inline-flex'; setText(pill, text); }
 }
 function clearChart(id) {
   const canvas = byId(id);
@@ -77,6 +89,14 @@ const eventNames = {
   A: 'A: V > 20', B: 'B: 12 < V ≤ 30', C: 'C: θ ≤ 30°',
   Ac: 'Aᶜ: V ≤ 20', D: 'D: V > 20, θ ≤ 30°',
   E: 'E: V > 12', F: 'F: 20 < V ≤ 30, θ ≤ 30°'
+};
+const eventTex = {
+  A: String.raw`A=\{V>20\}`, B: String.raw`B=\{12<V\leq30\}`,
+  C: String.raw`C=\{0\leq\theta\leq30^\circ\}`,
+  Ac: String.raw`A^{c}=\{0\leq V\leq20\}`,
+  D: String.raw`D=A\cap C=\{V>20,\ \theta\leq30^\circ\}`,
+  E: String.raw`E=A\cup B=\{V>12\}`,
+  F: String.raw`F=A\cap B\cap C=\{20<V\leq30,\ \theta\leq30^\circ\}`
 };
 function clearBase() {
   if (!ctx) return;
@@ -125,9 +145,8 @@ function renderQ2() {
   document.querySelectorAll('[data-draw]').forEach(btn => {
     btn.setAttribute('aria-pressed', String(selectedEvents.has(btn.dataset.draw)));
   });
-  setText('q2selection', selectedEvents.size
-    ? [...selectedEvents].map(key => eventNames[key]).join(' · ')
-    : 'No events selected · V is unbounded');
+  if (selectedEvents.size) setMathLines('q2selection', [...selectedEvents].map(key => ({ tex: eventTex[key], fallback: eventNames[key] })));
+  else setText('q2selection', 'No events selected · V is unbounded');
 }
 document.querySelectorAll('[data-draw]').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -205,15 +224,23 @@ on('q3aShow', 'click', () => {
   byId('q3a_s').value = 'H^c ∩ E1^c ∩ E2^c';
   byId('q3a_m').value = 'H^c ∩ (E1 Δ E2)';
   byId('q3a_u').value = 'H ∪ (E1 ∩ E2)';
-  setText('q3aout', definitionChecks());
+  setMathLines('q3aout', [
+    { text: definitionChecks() },
+    { tex: String.raw`S=H^{c}\cap E_1^{c}\cap E_2^{c}`, fallback: 'S = Hᶜ ∩ E₁ᶜ ∩ E₂ᶜ' },
+    { tex: String.raw`M=H^{c}\cap(E_1\triangle E_2)`, fallback: 'M = Hᶜ ∩ (E₁ Δ E₂)' },
+    { tex: String.raw`U=H\cup(E_1\cap E_2)`, fallback: 'U = H ∪ (E₁ ∩ E₂)' }
+  ]);
 });
 ['q3a_s', 'q3a_m', 'q3a_u'].forEach(id => on(id, 'input', () => setText('q3aout', 'Check your expressions.')));
 const rows = [];
 for (const e1 of [0, 1]) for (const e2 of [0, 1]) for (const h of [0, 1]) {
   const cls = !e1 && !e2 && !h ? 'S' : e1 !== e2 && !h ? 'M' : 'U';
-  rows.push(`<tr><td>${e1 ? 'E₁' : 'E₁ᶜ'}</td><td>${e2 ? 'E₂' : 'E₂ᶜ'}</td><td>${h ? 'H' : 'Hᶜ'}</td><td>${cls}</td></tr>`);
+  rows.push(`<tr><td data-tex="${e1 ? 'E_1' : 'E_1^{c}'}">${e1 ? 'E₁' : 'E₁ᶜ'}</td><td data-tex="${e2 ? 'E_2' : 'E_2^{c}'}">${e2 ? 'E₂' : 'E₂ᶜ'}</td><td data-tex="${h ? 'H' : 'H^{c}'}">${h ? 'H' : 'Hᶜ'}</td><td data-tex="${cls}">${cls}</td></tr>`);
 }
-if (byId('q3tbl')) byId('q3tbl').innerHTML = rows.join('');
+if (byId('q3tbl')) {
+  byId('q3tbl').innerHTML = rows.join('');
+  globalThis.TutorialMath?.typeset?.(byId('q3tbl'));
+}
 
 function q3Calculate() {
   const [p1, p2, ph] = ['p1', 'p2', 'ph'].map(readNumber);
@@ -223,13 +250,20 @@ function q3Calculate() {
   }
   const exactlyOne = p1 * (1 - p2) + (1 - p1) * p2;
   const S = (1 - p1) * (1 - p2) * (1 - ph), M = exactlyOne * (1 - ph), U = ph + p1 * p2 * (1 - ph);
-  setText('q3out', `(b) P(exactly one outage) = ${fix(exactlyOne)} (${pct(exactlyOne)})\n(c) P(S) = ${fix(S)} · P(M) = ${fix(M)} · P(U) = ${fix(U)}`);
-  setText('q3steps', [
-    `Independence gives P(exactly one) = p₁(1−p₂) + (1−p₁)p₂ = ${fix(exactlyOne)}`,
-    `P(S) = (1−p₁)(1−p₂)(1−P(H)) = ${fix(S)}`,
-    `P(M) = P(exactly one)(1−P(H)) = ${fix(M)}`,
-    `P(U) = P(H) + p₁p₂(1−P(H)) = ${fix(U)}`
-  ].join('\n'));
+  setMathLines('q3out', [
+    { label: '(b)', tex: String.raw`P(E_1\triangle E_2)=${fix(exactlyOne)}`, fallback: `P(exactly one outage) = ${fix(exactlyOne)}` },
+    { label: '(c)', tex: String.raw`P(S)=${fix(S)}`, fallback: `P(S) = ${fix(S)}` },
+    { tex: String.raw`P(M)=${fix(M)}`, fallback: `P(M) = ${fix(M)}` },
+    { tex: String.raw`P(U)=${fix(U)}`, fallback: `P(U) = ${fix(U)}` }
+  ]);
+  setMathLines('q3steps', [
+    { text: 'By independence:' },
+    { tex: String.raw`p_i=P(E_i),\qquad i=1,2`, fallback: 'pᵢ = P(Eᵢ), i = 1,2' },
+    { tex: String.raw`P(E_1\triangle E_2)=p_1(1-p_2)+(1-p_1)p_2=${fix(exactlyOne)}`, fallback: `P(exactly one) = p₁(1−p₂) + (1−p₁)p₂ = ${fix(exactlyOne)}` },
+    { tex: String.raw`P(S)=(1-p_1)(1-p_2)[1-P(H)]=${fix(S)}`, fallback: `P(S) = (1−p₁)(1−p₂)(1−P(H)) = ${fix(S)}` },
+    { tex: String.raw`P(M)=P(E_1\triangle E_2)[1-P(H)]=${fix(M)}`, fallback: `P(M) = P(exactly one)(1−P(H)) = ${fix(M)}` },
+    { tex: String.raw`P(U)=P(H)+p_1p_2[1-P(H)]=${fix(U)}`, fallback: `P(U) = P(H) + p₁p₂(1−P(H)) = ${fix(U)}` }
+  ]);
 }
 on('q3calc', 'click', q3Calculate);
 ['p1', 'p2', 'ph'].forEach(id => on(id, 'input', () => {
@@ -289,18 +323,20 @@ function q4Calculate() {
   const best = processLabels.filter((_, i) => Math.abs(contrib[i] - max) <= Math.max(1e-15, max * 1e-12));
   q4_state = { prior, poll, kill, contrib, best, pKill };
   const bestText = max === 0 ? 'All contributions are zero.' : `${best.join(' and ')}${best.length > 1 ? ' tie' : ''}: ${fix(max)}${best.length > 1 ? ' each' : ''}.`;
-  setText('q4out', [
-    `(a) P(no pollution) = ${fix(pNo)} (${pct(pNo)})`,
-    `(b) P(A | pollution) = ${pYes === 0 ? 'undefined: P(pollution) = 0' : `${fix(prior[0] * poll[0] / pYes)} (${pct(prior[0] * poll[0] / pYes)})`}`,
-    `(c) P(fish kill) = ${fix(pKill)} (${pct(pKill)})`,
-    `(d) Largest contribution: ${bestText}`
-  ].join('\n'));
-  setText('q4steps', [
-    'P(no pollution) = Σ P(i)[1−P(pollution|i)]',
-    'P(A|pollution) = P(A)P(pollution|A) / P(pollution)',
-    'P(fish kill) = Σ P(i)P(pollution|i)P(kill|pollution,i)',
-    'Compare contributions for complete clean-up or equal proportional reductions.'
-  ].join('\n'));
+  setMathLines('q4out', [
+    { label: '(a)', tex: String.raw`P(F^c)=${fix(pNo)}\quad(${pct(pNo).replace('%', '\\%')})`, fallback: `P(no pollution) = ${fix(pNo)} (${pct(pNo)})` },
+    pYes === 0
+      ? { label: '(b)', tex: String.raw`\begin{gathered}P(A\mid F)\text{ is undefined:}\\P(F)=0\end{gathered}`, fallback: 'P(A | pollution) = undefined: P(pollution) = 0' }
+      : { label: '(b)', tex: String.raw`P(A\mid F)=${fix(prior[0] * poll[0] / pYes)}\quad(${pct(prior[0] * poll[0] / pYes).replace('%', '\\%')})`, fallback: `P(A | pollution) = ${fix(prior[0] * poll[0] / pYes)} (${pct(prior[0] * poll[0] / pYes)})` },
+    { label: '(c)', tex: String.raw`P(K)=${fix(pKill)}\quad(${pct(pKill).replace('%', '\\%')})`, fallback: `P(fish kill) = ${fix(pKill)} (${pct(pKill)})` },
+    { text: `(d) Largest contribution: ${bestText}` }
+  ]);
+  setMathLines('q4steps', [
+    { tex: String.raw`P(F^c)=\sum_i P(i)[1-P(F\mid i)]`, fallback: 'P(no pollution) = Σ P(i)[1−P(pollution|i)]' },
+    { tex: String.raw`P(A\mid F)=\frac{P(A)P(F\mid A)}{P(F)}`, fallback: 'P(A|pollution) = P(A)P(pollution|A) / P(pollution)' },
+    { tex: String.raw`P(K)=\sum_i P(i)P(F\mid i)P(K\mid F,i)`, fallback: 'P(fish kill) = Σ P(i)P(pollution|i)P(kill|pollution,i)' },
+    { text: 'Compare contributions for complete clean-up or equal proportional reductions.' }
+  ]);
   drawBars('q4chart', processLabels, contrib, 'Fish-kill contribution by process');
 }
 on('q4calc', 'click', q4Calculate);
@@ -327,7 +363,12 @@ on('q4apply', 'click', () => {
   const contrib = q4_state.prior.map((value, i) => value * poll[i] * q4_state.kill[i]);
   const pKill = contrib.reduce((sum, value) => sum + value, 0), delta = fix((pKill - q4_state.pKill) * 100);
   drawBars('q4chart', processLabels, contrib, 'Scenario: fish-kill contribution');
-  showPill('q4delta', `P(fish kill) = ${fix(pKill)} (${pct(pKill)}) · Change: ${delta > 0 ? '+' : ''}${delta} percentage points`);
+  showPill('q4delta', '');
+  byId('q4delta').style.display = 'block';
+  setMathLines('q4delta', [
+    { tex: String.raw`P(K)=${fix(pKill)}\quad(${pct(pKill).replace('%', '\\%')})`, fallback: `P(fish kill) = ${fix(pKill)} (${pct(pKill)})` },
+    { text: `Change: ${delta > 0 ? '+' : ''}${delta} percentage points` }
+  ]);
 });
 ['q4which', 'q4tune'].forEach(id => on(id, 'input', () => {
   hidePill('q4delta');
@@ -343,16 +384,17 @@ function q7Calculate() {
   }
   const pAtLeastOne = 1 - (1 - pa) * (1 - pb), aOnly = pa * (1 - pb), bOnly = pb * (1 - pa), both = pa * pb;
   const pOnlyOne = aOnly + bOnly, pAccurate = aOnly * accA + bOnly * accB + both;
-  setText('q7out', [
-    `(a) P(at least one detection) = ${fix(pAtLeastOne)} (${pct(pAtLeastOne)})`,
-    `(b) P(exactly one detection) = ${fix(pOnlyOne)} (${pct(pOnlyOne)})`,
-    `(c) P(accurate location) = ${fix(pAccurate)} (${pct(pAccurate)})`
-  ].join('\n'));
-  setText('q7steps', [
-    'Independence gives P(at least one) = 1−(1−P(A))(1−P(B))',
-    'P(exactly one) = P(A)(1−P(B)) + (1−P(A))P(B)',
-    'P(accurate) = P(A only)·accA + P(B only)·accB + P(A∩B)'
-  ].join('\n'));
+  setMathLines('q7out', [
+    { label: '(a)', tex: String.raw`P(A\cup B)=${fix(pAtLeastOne)}\quad(${pct(pAtLeastOne).replace('%', '\\%')})`, fallback: `P(at least one detection) = ${fix(pAtLeastOne)} (${pct(pAtLeastOne)})` },
+    { label: '(b)', tex: String.raw`P(A\triangle B)=${fix(pOnlyOne)}\quad(${pct(pOnlyOne).replace('%', '\\%')})`, fallback: `P(exactly one detection) = ${fix(pOnlyOne)} (${pct(pOnlyOne)})` },
+    { label: '(c)', tex: String.raw`P(\text{accurate})=${fix(pAccurate)}`, fallback: `P(accurate location) = ${fix(pAccurate)}` }
+  ]);
+  setMathLines('q7steps', [
+    { text: 'By independence:' },
+    { tex: String.raw`P(A\cup B)=1-(1-p_A)(1-p_B)`, fallback: 'P(at least one) = 1−(1−P(A))(1−P(B))' },
+    { tex: String.raw`P(A\triangle B)=p_A(1-p_B)+(1-p_A)p_B`, fallback: 'P(exactly one) = P(A)(1−P(B)) + (1−P(A))P(B)' },
+    { tex: String.raw`\begin{aligned}P(\text{accurate})={}&a_Ap_A(1-p_B)\\&+a_B(1-p_A)p_B+p_Ap_B\end{aligned}`, fallback: 'P(accurate) = a_A p_A(1−p_B) + a_B(1−p_A)p_B + p_A p_B' }
+  ]);
   drawBars('q7chart', ['A only', 'B only', 'Both'], [aOnly * accA, bOnly * accB, both], 'Accurate-location contributions');
 }
 on('q7calc', 'click', q7Calculate);
@@ -375,32 +417,64 @@ on('q7qCheck', 'click', () => {
 // Local hints use the current page state. No network or generative AI is involved.
 function localTutor(section, userText) {
   if (section === 'q2') {
-    if (/check/i.test(userText)) return 'Both answers are no: D∩E=D and A∩C=D, with D nonempty.';
-    if (/subset|⊆/i.test(userText)) return 'D=A∩C ⊆ A ⊆ A∪B=E.';
-    return 'Test whether the intersection contains any outcome. Use D=A∩C and E=A∪B.';
+    if (/check/i.test(userText)) return [
+      { text: 'Both answers are no:' },
+      { tex: String.raw`D\cap E=D,\quad A\cap C=D\ne\varnothing`, fallback: 'D∩E=D and A∩C=D, with D nonempty.' }
+    ];
+    if (/subset|⊆/i.test(userText)) return [{ tex: String.raw`D=A\cap C\subseteq A\subseteq A\cup B=E`, fallback: 'D=A∩C ⊆ A ⊆ A∪B=E.' }];
+    return [
+      { text: 'Test whether the intersection contains any outcome.' },
+      { tex: String.raw`D=A\cap C,\qquad E=A\cup B`, fallback: 'D=A∩C and E=A∪B.' }
+    ];
   }
   if (section === 'q3') {
     if (/check.*\(a\)|definitions?/i.test(userText)) return definitionChecks();
-    if (/part.*b|exact(ly)? one/i.test(userText)) return 'Exactly one = (E₁∩E₂ᶜ) ∪ (E₁ᶜ∩E₂). Independence gives p₁(1−p₂)+(1−p₁)p₂.';
+    if (/part.*b|exact(ly)? one/i.test(userText)) return [
+      { tex: String.raw`E_1\triangle E_2=(E_1\cap E_2^c)\cup(E_1^c\cap E_2)`, fallback: 'Exactly one = (E₁∩E₂ᶜ) ∪ (E₁ᶜ∩E₂).' },
+      { text: 'Independence gives:' },
+      { tex: String.raw`P(E_1\triangle E_2)=p_1(1-p_2)+(1-p_1)p_2`, fallback: 'P(exactly one) = p₁(1−p₂)+(1−p₁)p₂.' }
+    ];
     if (/intuitive|S.*M.*U/i.test(userText)) return 'S: both units working, not hot. M: one outage, not hot. U: hot or both units out.';
     if (/compute|numbers|verify/i.test(userText)) {
       const [p1, p2, ph] = ['p1', 'p2', 'ph'].map(readNumber);
       if (![p1, p2, ph].every(isProbability)) return 'Enter probabilities from 0 to 1 in every field.';
       const one = p1 * (1 - p2) + (1 - p1) * p2;
-      return `P(exactly one)=${fix(one)}; P(S)=${fix((1 - p1) * (1 - p2) * (1 - ph))}; P(M)=${fix(one * (1 - ph))}; P(U)=${fix(ph + p1 * p2 * (1 - ph))}.`;
+      return [
+        { tex: String.raw`P(E_1\triangle E_2)=${fix(one)}`, fallback: `P(exactly one)=${fix(one)}` },
+        { tex: String.raw`P(S)=${fix((1 - p1) * (1 - p2) * (1 - ph))}`, fallback: `P(S)=${fix((1 - p1) * (1 - p2) * (1 - ph))}` },
+        { tex: String.raw`P(M)=${fix(one * (1 - ph))}`, fallback: `P(M)=${fix(one * (1 - ph))}` },
+        { tex: String.raw`P(U)=${fix(ph + p1 * p2 * (1 - ph))}`, fallback: `P(U)=${fix(ph + p1 * p2 * (1 - ph))}` }
+      ];
     }
     return 'Use independence for products; use disjoint cases for sums.';
   }
   if (section === 'q4') {
-    if (/why.*best|explain.*best|why that process/i.test(userText)) return 'Compare P(i)P(pollution|i)P(kill|pollution,i) for complete clean-up or equal proportional reductions. With the original inputs, A and C tie.';
+    if (/why.*best|explain.*best|why that process/i.test(userText)) return [
+      { text: 'Compare contributions for complete clean-up or equal proportional reductions:' },
+      { tex: String.raw`P(i)P(F\mid i)P(K\mid F,i)`, fallback: 'P(i)P(pollution|i)P(kill|pollution,i)' },
+      { text: 'With the original inputs, A and C tie.' }
+    ];
     if (/check|verify/i.test(userText)) return q4_state
-      ? `P(fish kill)=${fix(q4_state.pKill)}. Largest contributors: ${q4_state.best.join(' and ')}. Bayes divides the A-and-pollution branch by all pollution branches.`
+      ? [
+        { tex: String.raw`P(K)=${fix(q4_state.pKill)}`, fallback: `P(fish kill)=${fix(q4_state.pKill)}.` },
+        { text: `Largest contributors: ${q4_state.best.join(' and ')}.` },
+        { tex: String.raw`P(A\mid F)=\frac{P(A)P(F\mid A)}{P(F)}`, fallback: 'P(A|pollution) = P(A)P(pollution|A) / P(pollution)' }
+      ]
       : 'Calculate the current inputs first. Multiply along each branch, then sum across processes.';
     return 'Tree: process → pollution → fish kill. Multiply along branches; sum over processes.';
   }
   if (section === 'q7') {
-    if (/exclusive|mutual/i.test(userText)) return '“Exactly one” is A∩Bᶜ or Aᶜ∩B. Mutual exclusivity would require A∩B=∅; independent detectors can both detect.';
-    if (/check|verify|values/i.test(userText)) return 'P(at least one)=1−(1−pA)(1−pB). P(exactly one)=pA(1−pB)+(1−pA)pB. Weight A-only, B-only and both by their accuracies for part (c).';
+    if (/exclusive|mutual/i.test(userText)) return [
+      { tex: String.raw`A\triangle B=(A\cap B^c)\cup(A^c\cap B)`, fallback: '“Exactly one” is A∩Bᶜ or Aᶜ∩B.' },
+      { text: 'Mutual exclusivity would require:' },
+      { tex: String.raw`A\cap B=\varnothing`, fallback: 'A∩B=∅' },
+      { text: 'Independent detectors can both detect.' }
+    ];
+    if (/check|verify|values/i.test(userText)) return [
+      { tex: String.raw`P(A\cup B)=1-(1-p_A)(1-p_B)`, fallback: 'P(at least one)=1−(1−pA)(1−pB).' },
+      { tex: String.raw`P(A\triangle B)=p_A(1-p_B)+(1-p_A)p_B`, fallback: 'P(exactly one)=pA(1−pB)+(1−pA)pB.' },
+      { text: 'Weight A-only, B-only and both by their accuracies for part (c).' }
+    ];
     return 'Find A-only, B-only and both. Add all three for (a), the first two for (b), and weight by accuracy for (c).';
   }
   return 'Choose a question to see its hints.';
@@ -409,8 +483,10 @@ function addMsg(boxId, who, message) {
   const box = byId(boxId); if (!box) return;
   const div = document.createElement('div');
   div.className = `msg ${who === 'you' ? 'me' : 'bot'}`;
-  div.textContent = `${who === 'you' ? 'You' : 'Hint'}: ${message}`;
-  box.appendChild(div); box.scrollTop = box.scrollHeight;
+  box.appendChild(div);
+  if (who !== 'you' && Array.isArray(message)) setMathLines(div, [{ text: 'Hint:' }, ...message]);
+  else setText(div, `${who === 'you' ? 'You' : 'Hint'}: ${message}`);
+  box.scrollTop = box.scrollHeight;
 }
 function handleAsk(section) {
   const input = byId(`ask-${section}`), message = input?.value.trim();

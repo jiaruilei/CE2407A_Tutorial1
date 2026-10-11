@@ -6,6 +6,7 @@
   <meta name="description" content="CE2407A Tutorial 1: all seven questions on sample spaces, conditional probability, independence and Bayes' theorem.">
   <title>CE2407A · Tutorial 1</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="math-rendering.js"></script>
 </head>
 <body>
 <div class="shell">
@@ -50,18 +51,18 @@
     </section>
 
     <section id="q2" aria-labelledby="q2title" style="display:none">
-      <div class="section-heading"><h2 id="q2title">Wind speed &amp; direction</h2><p>V ≥ 0 mph; 0° ≤ θ ≤ 90°. Select events to compare their regions.</p></div>
+      <div class="section-heading"><h2 id="q2title">Wind speed &amp; direction</h2><p><span data-tex="V\ge 0\,\mathrm{mph}">V ≥ 0 mph</span>; <span data-tex="0^\circ\le\theta\le90^\circ">0° ≤ θ ≤ 90°</span>. Select events to compare their regions.</p></div>
       <div class="workspace wind-layout">
         <div class="controls">
           <h3>Events</h3>
           <div class="event-grid">
-            <button class="secondary" data-draw="A" aria-pressed="false"><b>A</b><span>V &gt; 20</span></button>
-            <button class="secondary" data-draw="B" aria-pressed="false"><b>B</b><span>12 &lt; V ≤ 30</span></button>
-            <button class="secondary" data-draw="C" aria-pressed="false"><b>C</b><span>θ ≤ 30°</span></button>
-            <button class="secondary" data-draw="Ac" aria-pressed="false"><b>A<sup>c</sup></b><span>V ≤ 20</span></button>
-            <button class="secondary" data-draw="D" aria-pressed="false"><b>D</b><span>A ∩ C</span></button>
-            <button class="secondary" data-draw="E" aria-pressed="false"><b>E</b><span>A ∪ B</span></button>
-            <button class="secondary" data-draw="F" aria-pressed="false"><b>F</b><span>A ∩ B ∩ C</span></button>
+            <button class="secondary" data-draw="A" aria-pressed="false"><b>A</b><span data-tex="V&gt;20">V &gt; 20</span></button>
+            <button class="secondary" data-draw="B" aria-pressed="false"><b>B</b><span data-tex="12&lt;V\le30">12 &lt; V ≤ 30</span></button>
+            <button class="secondary" data-draw="C" aria-pressed="false"><b>C</b><span data-tex="\theta\le30^\circ">θ ≤ 30°</span></button>
+            <button class="secondary" data-draw="Ac" aria-pressed="false"><b data-tex="A^{c}">A<sup>c</sup></b><span data-tex="V\le20">V ≤ 20</span></button>
+            <button class="secondary" data-draw="D" aria-pressed="false"><b>D</b><span data-tex="A\cap C">A ∩ C</span></button>
+            <button class="secondary" data-draw="E" aria-pressed="false"><b>E</b><span data-tex="A\cup B">A ∪ B</span></button>
+            <button class="secondary" data-draw="F" aria-pressed="false"><b>F</b><span data-tex="A\cap B\cap C">A ∩ B ∩ C</span></button>
             <button id="q2clear" class="secondary">Clear</button>
           </div>
           <div class="control-section"><h3>Mutually exclusive?</h3>
@@ -74,45 +75,45 @@
           <div class="panel-title"><h3>Sample space</h3><span id="q2selection" role="status">No events selected</span></div>
           <div class="plot"><canvas id="polar" width="520" height="420" role="img" aria-label="Wind sample space: speed is radial distance; direction is measured from east towards north."></canvas></div>
           <details class="coach" id="coach-q2"><summary>Hints</summary>
-            <div class="chips"><button class="chip" data-prompt="q2" data-text="Explain why D ⊆ E.">D ⊆ E</button><button class="chip" data-prompt="q2" data-text="Give a hint for mutual exclusivity.">Mutual exclusivity</button><button class="chip" data-prompt="q2" data-text="Check my quiz choices.">Check choices</button></div>
+            <div class="chips"><button class="chip" data-prompt="q2" data-text="Explain why D ⊆ E."><span data-tex="D\subseteq E">D ⊆ E</span></button><button class="chip" data-prompt="q2" data-text="Give a hint for mutual exclusivity.">Mutual exclusivity</button><button class="chip" data-prompt="q2" data-text="Check my quiz choices.">Check choices</button></div>
             <div class="msgs" id="msgs-q2" role="log" aria-label="Q2 hints"></div><div class="row2"><textarea id="ask-q2" aria-label="Ask about Q2" placeholder="Ask about the events…"></textarea><button data-send="q2">Ask</button></div>
           </details>
         </div>
       </div>
     </section>
     <section id="q3" aria-labelledby="q3title" style="display:none">
-      <div class="section-heading"><h2 id="q3title">Power plant reliability</h2><p>E₁, E₂: unit outages. H: hot weather. The three events are mutually independent.</p></div>
+      <div class="section-heading"><h2 id="q3title">Power plant reliability</h2><p><span data-tex="E_1,E_2">E₁, E₂</span>: unit outages. <span data-tex="H">H</span>: hot weather. The three events are mutually independent.</p></div>
       <div class="workspace">
         <div class="controls">
           <h3>(a) Define the operating states</h3>
           <p class="brief">S: both units work, not hot.<br>M: one unit down, not hot.<br>U: all other outcomes.</p>
           <div class="kv expressions">
-            <label for="q3a_s">S =</label><input id="q3a_s" type="text" autocomplete="off" aria-label="Expression for S">
-            <label for="q3a_m">M =</label><input id="q3a_m" type="text" autocomplete="off" aria-label="Expression for M">
-            <label for="q3a_u">U =</label><input id="q3a_u" type="text" autocomplete="off" aria-label="Expression for U">
+            <label for="q3a_s"><span data-tex="S=">S =</span></label><input id="q3a_s" type="text" autocomplete="off" aria-label="Expression for S">
+            <label for="q3a_m"><span data-tex="M=">M =</span></label><input id="q3a_m" type="text" autocomplete="off" aria-label="Expression for M">
+            <label for="q3a_u"><span data-tex="U=">U =</span></label><input id="q3a_u" type="text" autocomplete="off" aria-label="Expression for U">
           </div>
-          <p class="syntax">Notation: E1, E2, H; ^c, ∩, ∪, Δ.</p>
+          <p class="syntax">Type: <code>E1, E2, H; ^c, ∩, ∪, Δ</code>.</p>
           <div class="actions"><button id="q3aCheck">Check</button><button id="q3aShow" class="secondary">Show answer</button></div>
           <div class="feedback" id="q3aout" role="status">Enter your event expressions.</div>
           <div class="control-section"><h3>(b) &amp; (c) Probabilities</h3>
-            <div class="kv"><label for="p1">P(E₁)</label><input id="p1" type="number" value="0.01" step="0.001" min="0" max="1"><label for="p2">P(E₂)</label><input id="p2" type="number" value="0.02" step="0.001" min="0" max="1"><label for="ph">P(H)</label><input id="ph" type="number" value="0.10" step="0.01" min="0" max="1"></div>
+            <div class="kv"><label for="p1"><span data-tex="P(E_1)">P(E₁)</span></label><input id="p1" type="number" value="0.01" step="0.001" min="0" max="1"><label for="p2"><span data-tex="P(E_2)">P(E₂)</span></label><input id="p2" type="number" value="0.02" step="0.001" min="0" max="1"><label for="ph"><span data-tex="P(H)">P(H)</span></label><input id="ph" type="number" value="0.10" step="0.01" min="0" max="1"></div>
             <div class="actions"><button id="q3calc">Calculate</button><button id="q3reset" class="secondary">Reset</button></div>
           </div>
         </div>
         <div class="visual-panel">
           <div class="card"><h3>Operating states</h3><table class="tbl"><thead><tr><th scope="col">Unit 1</th><th scope="col">Unit 2</th><th scope="col">Weather</th><th scope="col">State</th></tr></thead><tbody id="q3tbl"></tbody></table></div>
-          <div class="card results-card"><h3>Results</h3><div class="out" id="q3out" role="status">Calculate to find P(exactly one outage) and P(S), P(M), P(U).</div><details><summary>Working</summary><div class="out" id="q3steps"></div></details></div>
+          <div class="card results-card"><h3>Results</h3><div class="out" id="q3out" role="status">Calculate the outage and operating-state probabilities.</div><details><summary>Working</summary><div class="out" id="q3steps"></div></details></div>
           <details class="coach" id="coach-q3"><summary>Hints</summary><div class="chips"><button class="chip" data-prompt="q3" data-text="Check my definitions.">Check definitions</button><button class="chip" data-prompt="q3" data-text="Explain part b without numbers.">Exactly one outage</button><button class="chip" data-prompt="q3" data-text="Explain S/M/U intuitively.">Operating states</button></div><div class="msgs" id="msgs-q3" role="log" aria-label="Q3 hints"></div><div class="row2"><textarea id="ask-q3" aria-label="Ask about Q3" placeholder="Ask about states or probabilities…"></textarea><button data-send="q3">Ask</button></div></details>
         </div>
       </div>
     </section>
     <section id="q4" aria-labelledby="q4title" style="display:none">
-      <div class="section-heading"><h2 id="q4title">Pollution &amp; Bayes’ theorem</h2><p>Processes A–D run in the ratio 2:4:3:1. Find pollution and fish-kill probabilities.</p></div>
+      <div class="section-heading"><h2 id="q4title">Pollution &amp; Bayes’ theorem</h2><p>Processes A–D run in the ratio 2:4:3:1. <span data-tex="F">F</span>: pollution; <span data-tex="K">K</span>: fish kill.</p></div>
       <div class="workspace">
         <div class="controls"><h3>Probabilities · A, B, C, D</h3>
-          <div class="stacked-fields"><label for="q4prior">P(process)</label><input id="q4prior" type="text" value="0.2,0.4,0.3,0.1" spellcheck="false"><label for="q4poll">P(pollution | process)</label><input id="q4poll" type="text" value="0.40,0.05,0.30,0.10" spellcheck="false"><label for="q4kill">P(fish kill | pollution, process)</label><input id="q4kill" type="text" value="0.9,0.1,0.8,0.3" spellcheck="false"></div>
+          <div class="stacked-fields"><label for="q4prior"><span data-tex="P(i)">P(i)</span></label><input id="q4prior" type="text" value="0.2,0.4,0.3,0.1" spellcheck="false"><label for="q4poll"><span data-tex="P(F\mid i)">P(F | i)</span></label><input id="q4poll" type="text" value="0.40,0.05,0.30,0.10" spellcheck="false"><label for="q4kill"><span data-tex="P(K\mid F,i)">P(K | F, i)</span></label><input id="q4kill" type="text" value="0.9,0.1,0.8,0.3" spellcheck="false"></div>
           <div class="actions"><button id="q4calc">Calculate</button><button id="q4reset" class="secondary">Reset</button></div>
-          <div class="control-section"><h3>(d) Reduce pollution</h3><div class="kv"><label for="q4which">Process</label><select id="q4which"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select><label for="q4tune">New P(pollution)</label><input id="q4tune" type="number" step="0.01" min="0" max="1" value="0.20"></div><div class="actions"><button id="q4apply" class="secondary">Compare fish-kill risk</button></div><span id="q4delta" class="pill" role="status" style="display:none"></span></div>
+          <div class="control-section"><h3>(d) Reduce pollution</h3><div class="kv"><label for="q4which">Process</label><select id="q4which"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select><label for="q4tune"><span data-tex="P_{\mathrm{new}}(F\mid i)">New P(F | i)</span></label><input id="q4tune" type="number" step="0.01" min="0" max="1" value="0.20"></div><div class="actions"><button id="q4apply" class="secondary">Compare fish-kill risk</button></div><span id="q4delta" class="pill" role="status" style="display:none"></span></div>
         </div>
         <div class="visual-panel">
           <div class="card results-card"><h3>Results</h3><div class="out" id="q4out" role="status">Calculate to evaluate (a)–(d).</div></div>
@@ -124,15 +125,15 @@
       </div>
     </section>
     <section id="q5" style="display:none" aria-labelledby="q5-title">
-      <div class="section-heading"><h2 id="q5-title">Compaction &amp; pavement life</h2><p>C: compaction (%) · L: pavement life (months) · 100 test results</p></div>
+      <div class="section-heading"><h2 id="q5-title">Compaction &amp; pavement life</h2><p><span data-tex="C">C</span>: compaction (%) · <span data-tex="L">L</span>: pavement life (months) · 100 test results</p></div>
       <div class="workspace">
         <div class="controls">
           <h3>Choose a probability</h3>
           <div class="event-grid q5-parts" aria-label="Question 5 parts">
-            <button type="button" class="secondary" data-q5-part="a" aria-pressed="true"><b>(a)</b><span>P(20 &lt; L ≤ 40 | C ≥ 70)</span></button>
-            <button type="button" class="secondary" data-q5-part="b" aria-pressed="false"><b>(b)</b><span>P(L &gt; 40 | C ≤ 95)</span></button>
-            <button type="button" class="secondary" data-q5-part="c" aria-pressed="false"><b>(c)</b><span>P(L &gt; 40 | 70 &lt; C ≤ 95)</span></button>
-            <button type="button" class="secondary" data-q5-part="d" aria-pressed="false"><b>(d)</b><span>P(L &gt; 30 and C &lt; 70)</span></button>
+            <button type="button" class="secondary" data-q5-part="a" aria-pressed="true"><b>(a)</b><span data-tex="P(20&lt;L\le40\mid C\ge70)">P(20 &lt; L ≤ 40 | C ≥ 70)</span></button>
+            <button type="button" class="secondary" data-q5-part="b" aria-pressed="false"><b>(b)</b><span data-tex="P(L&gt;40\mid C\le95)">P(L &gt; 40 | C ≤ 95)</span></button>
+            <button type="button" class="secondary" data-q5-part="c" aria-pressed="false"><b>(c)</b><span data-tex="P(L&gt;40\mid70&lt;C\le95)">P(L &gt; 40 | 70 &lt; C ≤ 95)</span></button>
+            <button type="button" class="secondary" data-q5-part="d" aria-pressed="false"><b>(d)</b><span data-tex="P(L&gt;30,\ C&lt;70)">P(L &gt; 30 and C &lt; 70)</span></button>
           </div>
           <div class="actions"><button type="button" id="q5calc">Calculate</button></div>
         </div>
@@ -146,7 +147,7 @@
                 <rect id="q5event-region" fill="#2563eb" fill-opacity=".22" stroke="#2563eb" stroke-width="1.5"></rect>
               </svg>
             </div>
-            <p id="q5selection" class="feedback" role="status"></p>
+            <div id="q5selection" class="feedback" role="status"></div>
           </div>
           <div class="card results-card">
             <h3>Results</h3>
@@ -154,7 +155,7 @@
             <div class="out" id="q5out" role="status">Calculate from the highlighted region.</div>
             <details><summary>Working</summary><div class="out" id="q5steps"></div></details>
           </div>
-          <details class="coach"><summary>Hints</summary><p class="brief" id="q5hint">Condition on C first. Count the outcomes with 20 &lt; L ≤ 40 within that sample.</p></details>
+          <details class="coach"><summary>Hints</summary><p class="brief" id="q5hint">Condition on compaction first. Count the highlighted outcomes within that sample.</p></details>
         </div>
       </div>
     </section>
@@ -162,13 +163,13 @@
     <section id="q6" aria-labelledby="q6title" style="display:none">
       <div class="section-heading">
         <h2 id="q6title">Earthquakes &amp; liquefaction</h2>
-        <p>L, M, H: earthquake intensities. F: liquefaction. Successive earthquakes are independent.</p>
+        <p><span data-tex="L,M,H">L, M, H</span>: earthquake intensities. <span data-tex="F">F</span>: liquefaction. Successive earthquakes are independent.</p>
       </div>
       <div class="workspace">
         <div class="controls">
           <h3>Occurrence &amp; liquefaction</h3>
           <table class="tbl input-table">
-            <thead><tr><th scope="col">Intensity</th><th scope="col">Rate / year</th><th scope="col">P(F | i)</th></tr></thead>
+            <thead><tr><th scope="col">Intensity</th><th scope="col">Rate / year</th><th scope="col"><span data-tex="P(F\mid i)">P(F | i)</span></th></tr></thead>
             <tbody>
               <tr><th scope="row">Low (L)</th><td><input id="q6rateL" aria-label="Low intensity occurrence rate per year" type="number" value="1" min="0" step="0.01"></td><td><input id="q6riskL" aria-label="Liquefaction probability given low intensity" type="number" value="0.05" min="0" max="1" step="0.01"></td></tr>
               <tr><th scope="row">Medium (M)</th><td><input id="q6rateM" aria-label="Medium intensity occurrence rate per year" type="number" value="0.1" min="0" step="0.01"></td><td><input id="q6riskM" aria-label="Liquefaction probability given medium intensity" type="number" value="0.20" min="0" max="1" step="0.01"></td></tr>
@@ -185,7 +186,7 @@
           <div class="card results-card"><h3>Results</h3><div class="out" id="q6out" role="status">Calculate to evaluate (a)–(d).</div></div>
           <div class="card chart-card"><h3 id="q6chart-title">Liquefaction contribution by intensity</h3><canvas id="q6chart" width="520" height="260" role="img" aria-label="Contributions to liquefaction probability from low, medium and high intensity earthquakes."></canvas></div>
           <details class="disclosure"><summary>Working</summary><div class="out" id="q6steps"></div></details>
-          <details class="coach"><summary>Hints</summary><p class="brief">Normalise the rates first. Use total probability for F, independence for three survivals, and Bayes’ theorem for P(L | F).</p></details>
+          <details class="coach"><summary>Hints</summary><p class="brief">Normalise the rates first. Use total probability for F, independence for three survivals, and Bayes’ theorem for <span data-tex="P(L\mid F)">P(L | F)</span>.</p></details>
         </div>
       </div>
     </section>
@@ -194,12 +195,12 @@
       <div class="section-heading"><h2 id="q7title">Two independent detectors</h2><p>Either detector can detect the object. If both detect it, its location is accurate.</p></div>
       <div class="workspace">
         <div class="controls"><h3>Detection &amp; accuracy</h3>
-          <div class="kv"><label for="qa">P(A detects)</label><input id="qa" type="number" value="0.8" step="0.01" min="0" max="1"><label for="qb">P(B detects)</label><input id="qb" type="number" value="0.9" step="0.01" min="0" max="1"><label for="qaccA">P(accurate | A only)</label><input id="qaccA" type="number" value="0.7" step="0.01" min="0" max="1"><label for="qaccB">P(accurate | B only)</label><input id="qaccB" type="number" value="0.4" step="0.01" min="0" max="1"></div>
+          <div class="kv"><label for="qa"><span data-tex="p_A=P(A)">pA = P(A)</span></label><input id="qa" type="number" value="0.8" step="0.01" min="0" max="1"><label for="qb"><span data-tex="p_B=P(B)">pB = P(B)</span></label><input id="qb" type="number" value="0.9" step="0.01" min="0" max="1"><label for="qaccA"><span data-tex="a_A">aA</span> · A-only accuracy</label><input id="qaccA" type="number" value="0.7" step="0.01" min="0" max="1"><label for="qaccB"><span data-tex="a_B">aB</span> · B-only accuracy</label><input id="qaccB" type="number" value="0.4" step="0.01" min="0" max="1"></div>
           <div class="actions"><button id="q7calc">Calculate</button><button id="q7reset" class="secondary">Reset</button></div>
           <div class="control-section"><h3>Concept check</h3><p class="brief">“Only one detects” means A and B are mutually exclusive.</p><fieldset class="choice-row"><legend class="sr-only">True or false?</legend><label><input type="radio" name="q7quiz" value="T"> True</label><label><input type="radio" name="q7quiz" value="F"> False</label></fieldset><div class="actions"><button id="q7qCheck" class="secondary">Check</button><span id="q7qRes" class="pill" role="status" style="display:none"></span></div></div>
         </div>
         <div class="visual-panel">
-          <div class="card results-card"><h3>Results</h3><div class="out" id="q7out" role="status">Calculate to find P(at least one), P(only one), and P(accurate).</div></div>
+          <div class="card results-card"><h3>Results</h3><div class="out" id="q7out" role="status">Calculate the detection and location probabilities.</div></div>
           <div class="card chart-card"><h3 id="q7chart-title">Accurate-location contributions</h3><canvas id="q7chart" width="520" height="260" role="img" aria-label="Contributions to accurate-location probability from A only, B only, and both detectors."></canvas></div>
           <details class="disclosure"><summary>Working</summary><div class="out" id="q7steps"></div></details>
           <details class="coach" id="coach-q7"><summary>Hints</summary><div class="chips"><button class="chip" data-prompt="q7" data-text="Check my (a)–(c) values.">Check probabilities</button><button class="chip" data-prompt="q7" data-text="Explain only one versus mutual exclusivity.">Only one vs. exclusive</button><button class="chip" data-prompt="q7" data-text="Give a next-step hint.">Next step</button></div><div class="msgs" id="msgs-q7" role="log" aria-label="Q7 hints"></div><div class="row2"><textarea id="ask-q7" aria-label="Ask about Q7" placeholder="Ask about detection or accuracy…"></textarea><button data-send="q7">Ask</button></div></details>
@@ -212,5 +213,6 @@
 <script src="question1.js"></script>
 <script src="question5.js"></script>
 <script src="question6.js"></script>
+<script id="MathJax-script" async src="assets/mathjax/tex-svg.js"></script>
 </body>
 </html>

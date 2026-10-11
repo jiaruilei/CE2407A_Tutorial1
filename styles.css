@@ -115,3 +115,23 @@ button:disabled{opacity:.5;cursor:default}
 .q5-counts{margin-bottom:14px;table-layout:fixed}
 .q5-counts td{font-size:14px;overflow-wrap:anywhere}
 @media(max-width:800px){.q5-parts{grid-template-columns:1fr 1fr}}
+
+/* Equations stay readable without changing the teaching-page layout. */
+.out{font-family:inherit;line-height:1.6;white-space:pre-wrap}
+.math-row{display:flex;align-items:baseline;gap:8px;min-width:0;margin:8px 0;white-space:normal}
+.math-label{flex:0 0 auto;color:var(--muted);font-size:15px}
+.math-formula{display:block;min-width:0;max-width:100%;overflow-x:auto;overflow-y:hidden;padding:3px 0 5px;flex:0 1 auto}
+.math-row:has(.math-label) .math-formula{flex:1 1 0}
+.math-text{white-space:pre-wrap}
+[data-tex]{min-width:0;max-width:100%}
+mjx-container{max-width:100%;outline-offset:2px}
+mjx-container[display=true]{margin:.2em 0!important;text-align:left!important}
+.math-formula mjx-container{margin:0!important}
+.out mjx-container{font-size:105%!important}
+.event-grid mjx-container{margin:0!important}
+.q5-parts{grid-template-columns:1fr}
+.q5-parts button{min-height:62px}
+.q5-parts button span{font-size:16px}
+.q5-counts mjx-container{font-size:95%!important}
+code{font-size:.9em}
+@media(max-width:480px){.math-row{gap:6px}.math-label{font-size:14px}.out{font-size:16px}.q5-parts button span{font-size:15px}}

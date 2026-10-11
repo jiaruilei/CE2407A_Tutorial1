@@ -9,7 +9,7 @@ const source = fs.readFileSync(path.join(root, 'tutorial.js'), 'utf8');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 
 // A small DOM/canvas harness exercises the actual page IDs and event handlers.
-function page() {
+function page(withMath = false) {
   function element(tag, attributes = {}) {
     const classes = new Set((attributes.class || '').split(/\s+/));
     const listeners = new Map();
@@ -59,7 +59,17 @@ function page() {
       throw new Error(`Unsupported selector: ${selector}`);
     }
   };
-  const context = vm.createContext({ document });
+  const mathCalls = [], typesetCalls = [];
+  const TutorialMath = {
+    setText(element, text) { element.textContent = text; delete element.mathRows; },
+    setLines(element, lines) {
+      element.mathRows = lines;
+      element.textContent = lines.map(line => line.text ?? `${line.label ? `${line.label} ` : ''}${line.fallback}`).join('\n');
+      mathCalls.push({ element, lines });
+    },
+    typeset(element) { typesetCalls.push(element); }
+  };
+  const context = vm.createContext({ document, ...(withMath ? { TutorialMath } : {}) });
   vm.runInContext(source, context, { filename: 'tutorial.js' });
   const get = id => {
     const node = document.getElementById(id);
@@ -68,7 +78,7 @@ function page() {
   };
   get('q4which').value = '0';
   return {
-    get, run: expression => vm.runInContext(expression, context),
+    get, mathCalls, typesetCalls, run: expression => vm.runInContext(expression, context),
     click: id => get(id).dispatch('click'),
     input(id, value) { get(id).value = value; get(id).dispatch('input'); },
     choose(name, value) {
@@ -98,8 +108,9 @@ test('equivalent Q3 expressions are accepted, malformed and wrong expressions ar
   assert.notEqual(evaluate('H ∩ E1 ∩ E2'), 234);
   for (const expression of ['', 'H ∩', '(H ∪ E1', 'alert(1)', 'S']) assert.throws(() => evaluate(expression));
   p.click('q3aShow');
-  assert.equal(p.get('q3aout').textContent, 'S: ✓ · M: ✓ · U: ✓');
-  assert.match(p.run("localTutor('q3', 'Walk me through part (b)')"), /Independence gives/);
+  assert.match(p.get('q3aout').textContent, /^S: ✓ · M: ✓ · U: ✓/);
+  assert.match(p.get('q3aout').textContent, /S = Hᶜ ∩ E₁ᶜ ∩ E₂ᶜ/);
+  assert.match(p.run("localTutor('q3', 'Walk me through part (b)').map(row => row.text || row.fallback).join(' ')"), /Independence gives/);
 });
 
 test('Q4 reports the A/C tie and compares scenarios against its baseline', () => {
@@ -114,11 +125,11 @@ test('Q4 reports the A/C tie and compares scenarios against its baseline', () =>
   p.choose('q4quiz', 'B'); p.click('q4qCheck');
   assert.match(p.get('q4qRes').textContent, /Try again/);
   p.input('q4tune', '0.2'); p.click('q4apply');
-  assert.match(p.get('q4delta').textContent, /0\.113.*-3\.6 percentage points/);
+  assert.match(p.get('q4delta').textContent, /0\.113.*-3\.6 percentage points/s);
   assert.match(p.get('q4chart-title').textContent, /Scenario/);
   assert.match(p.get('q4chart').attributes['aria-label'], /Scenario.*A: 3.6%/);
   p.input('q4tune', '0'); p.click('q4apply');
-  assert.match(p.get('q4delta').textContent, /0\.077.*-7\.2 percentage points/);
+  assert.match(p.get('q4delta').textContent, /0\.077.*-7\.2 percentage points/s);
 });
 
 test('Q4 rejects blanks, invalid probabilities, wrong counts and nonunit priors', () => {
@@ -182,4 +193,53 @@ test('tab navigation updates visible question and aria-current', () => {
   assert.equal(p.get('q7').style.display, 'block');
   assert.equal(p.get('q2').style.display, 'none');
   assert.equal(p.tabs.filter(tab => tab.attributes['aria-current'] === 'true').length, 1);
+});
+
+test('authored TeX renders Q2 selections, Q3 models/table, results and workings with numeric fallbacks', () => {
+  const p = page(true);
+  p.draw('Ac').dispatch('click');
+  assert.equal(p.get('q2selection').mathRows[0].tex, String.raw`A^{c}=\{0\leq V\leq20\}`);
+  assert.ok(p.typesetCalls.includes(p.get('q3tbl')));
+  assert.match(p.get('q3tbl').innerHTML, /data-tex="E_1\^\{c\}"/);
+  p.click('q3aShow');
+  assert.equal(p.get('q3aout').mathRows[1].tex, String.raw`S=H^{c}\cap E_1^{c}\cap E_2^{c}`);
+  for (const q of ['q3', 'q4', 'q7']) {
+    p.click(`${q}calc`);
+    assert.ok(p.get(`${q}out`).mathRows.some(row => row.tex));
+    assert.ok(p.get(`${q}steps`).mathRows.some(row => row.tex));
+    for (const row of p.get(`${q}out`).mathRows.filter(row => row.tex)) {
+      assert.ok(row.fallback.length > 0);
+      assert.doesNotMatch(row.tex, /[\u0000-\u001f]/);
+      assert.doesNotMatch(row.tex, /(^|[^\\])%/);
+    }
+  }
+  assert.match(p.get('q3out').textContent, /0\.10018/);
+  assert.match(p.get('q4steps').mathRows.find(row => row.tex.includes('frac')).tex, /\\frac\{P\(A\)P\(F\\mid A\)\}\{P\(F\)\}/);
+  assert.match(p.get('q7out').textContent, /0\.848/);
+});
+
+test('edits, reset and invalid inputs clear old MathJax output through the shared helper', () => {
+  const p = page(true);
+  p.click('q3calc'); assert.ok(p.get('q3out').mathRows);
+  p.input('p1', ''); p.click('q3calc');
+  assert.equal(p.get('q3out').mathRows, undefined);
+  assert.match(p.get('q3out').textContent, /every field/);
+  p.click('q4calc'); p.click('q4apply'); assert.ok(p.get('q4delta').mathRows);
+  p.click('q4reset');
+  assert.equal(p.get('q4out').mathRows, undefined);
+  assert.equal(p.get('q4delta').mathRows, undefined);
+  p.click('q7calc'); p.input('qb', '0.5');
+  assert.equal(p.get('q7out').mathRows, undefined);
+});
+
+test('user messages remain literal text while trusted hint formulas use the math helper', () => {
+  const p = page(true);
+  const message = String.raw`part b \\htmlClass{unexpected}{x} <img src=x>`;
+  p.get('ask-q3').value = message;
+  p.run("handleAsk('q3')");
+  const [user, hint] = p.get('msgs-q3').children;
+  assert.equal(user.textContent, `You: ${message}`);
+  assert.equal(user.mathRows, undefined);
+  assert.ok(hint.mathRows.some(row => row.tex?.includes(String.raw`E_1\triangle E_2`)));
+  assert.ok(hint.mathRows.every(row => !row.tex?.includes('unexpected')));
 });

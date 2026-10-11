@@ -5,7 +5,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 
 const source = fs.readFileSync(path.join(__dirname, '..', 'question5.js'), 'utf8');
-function loadQuestion() {
+function loadQuestion(withMath = false) {
   const node = () => ({
     textContent: '', attributes: {}, handlers: {},
     setAttribute(key, value) { this.attributes[key] = value; },
@@ -20,7 +20,11 @@ function loadQuestion() {
     getElementById: id => elements[id],
     querySelectorAll: selector => selector === '[data-q5-part]' ? buttons : []
   };
-  vm.runInNewContext(source, { document });
+  const TutorialMath = withMath ? {
+    setLines(id, rows) { elements[id].mathRows = rows; elements[id].textContent = rows.map(row => row.fallback ?? row.text ?? '').join('\n'); },
+    setText(target, text) { const element = typeof target === 'string' ? elements[target] : target; delete element.mathRows; element.textContent = text; }
+  } : undefined;
+  vm.runInNewContext(source, { document, TutorialMath });
   return {
     elements, buttons,
     select: key => buttons.find(button => button.dataset.q5Part === key).handlers.click(),
@@ -36,8 +40,8 @@ test('Q5 uses the official conditional and joint counts for all four parts', () 
   };
   for (const [key, [numerator, denominator, result]] of Object.entries(expected)) {
     page.select(key); page.calculate();
-    assert.match(page.elements.q5numerator.textContent, new RegExp(`^${numerator} \\(`));
-    assert.match(page.elements.q5denominator.textContent, new RegExp(`^${denominator} \\(`));
+    assert.equal(page.elements.q5numerator.textContent, String(numerator));
+    assert.equal(page.elements.q5denominator.textContent, String(denominator));
     assert.ok(page.elements.q5out.textContent.includes(`${numerator}/${denominator}`));
     assert.ok(page.elements.q5out.textContent.includes(result));
   }
@@ -84,4 +88,18 @@ test('the original plot asset is present at the intended crop resolution', () =>
   assert.equal(image.subarray(1, 4).toString(), 'PNG');
   assert.equal(image.readUInt32BE(16), 1120);
   assert.equal(image.readUInt32BE(20), 808);
+});
+
+test('Q5 submits conditional probabilities and count fractions to MathJax, then clears them on selection', () => {
+  const page = loadQuestion(true);
+  page.select('b'); page.calculate();
+  assert.equal(page.elements.q5out.mathRows[0].tex, String.raw`P(L>40\mid C\le95)`);
+  assert.match(page.elements.q5out.mathRows[1].tex, /\\frac\{6\}\{95\}\\approx0\.06316/);
+  assert.match(page.elements.q5steps.mathRows[0].tex, /\\frac\{n\(A\\cap B\)\}\{n\(B\)\}/);
+  page.select('d');
+  assert.equal(page.elements.q5out.mathRows, undefined);
+  assert.equal(page.elements.q5steps.mathRows, undefined);
+  page.calculate();
+  assert.match(page.elements.q5out.mathRows[0].tex, /\\cap/);
+  assert.doesNotMatch(page.elements.q5out.mathRows[0].tex, /\\mid/);
 });

@@ -31,3 +31,37 @@ test('travel times reject nonexistent links and reversed highways', () => {
   assert.throws(() => possibleTimes([9, 2, 1]), /arrows/);
   assert.throws(() => possibleTimes([1]), /at least two/);
 });
+
+test('Q1 renders route arrows and travel-time sets, clearing the previous table on route change', () => {
+  const fs = require('node:fs'), vm = require('node:vm'), path = require('node:path');
+  const node = () => ({
+    value: '', textContent: '', handlers: {}, children: [],
+    addEventListener(event, handler) { this.handlers[event] = handler; },
+    setAttribute() {}, append(child) { this.children.push(child); }
+  });
+  const elements = Object.fromEntries([
+    'q1network', 'q1-next', 'q1-add', 'q1-undo', 'q1-reset', 'q1-current', 'q1-highlight',
+    'q1-show-routes', 'q1-routes', 'q1-time-route', 'q1-calculate', 'q1-time-results', 'q1-combinations'
+  ].map(id => [id, node()]));
+  elements['q1-time-route'].value = '1,2,9';
+  const TutorialMath = {
+    setLines(target, rows) { (typeof target === 'string' ? elements[target] : target).mathRows = rows; },
+    setText(target, value) { const element = typeof target === 'string' ? elements[target] : target; element.textContent = value; delete element.mathRows; element.children = []; },
+    typeset() {}
+  };
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, '..', 'question1.js'), 'utf8'), {
+    document: { getElementById: id => elements[id], createElement: node }, TutorialMath
+  });
+  elements['q1-calculate'].handlers.click();
+  assert.equal(elements['q1-time-results'].mathRows[0].tex, String.raw`1\to2\to9`);
+  assert.equal(elements['q1-time-results'].mathRows[1].tex, String.raw`T\in\left\{4,\,5,\,6,\,7\right\}\ \mathrm{h}`);
+  assert.equal(elements['q1-combinations'].children.length, 1);
+  const tableHTML = elements['q1-combinations'].children[0].innerHTML;
+  assert.match(tableHTML, /data-tex="1\\to2">1 → 2/);
+  assert.match(tableHTML, /data-tex="2\\to9">2 → 9/);
+  assert.doesNotMatch(tableHTML, /\\[()[\]]/);
+  elements['q1-time-route'].value = '1,4,6,8,9';
+  elements['q1-time-route'].handlers.change();
+  assert.equal(elements['q1-time-results'].mathRows, undefined);
+  assert.equal(elements['q1-combinations'].children.length, 0);
+});

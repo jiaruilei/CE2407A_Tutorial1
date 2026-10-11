@@ -37,3 +37,38 @@ test('Q6 rejects invalid rates and conditional probabilities', () => {
     assert.throws(() => calculateLiquefaction([1, .1, .01], risks));
   }
 });
+
+test('Q6 sends fractions, sums, powers and conditional probabilities to MathJax and clears invalid results', () => {
+  const fs = require('node:fs'), vm = require('node:vm'), path = require('node:path');
+  const elements = {};
+  const node = id => elements[id] ??= { value: '', textContent: '', handlers: {} };
+  const setText = (id, text) => { node(id).textContent = text; delete node(id).mathRows; };
+  const TutorialMath = {
+    setLines(id, rows) { node(id).mathRows = rows; }, setText
+  };
+  ['L', 'M', 'H'].forEach((label, i) => {
+    node(`q6rate${label}`).value = [1, .1, .01][i];
+    node(`q6risk${label}`).value = [.05, .2, .9][i];
+  });
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, '..', 'question6.js'), 'utf8'), {
+    document: {}, TutorialMath, setText, byId: node,
+    on: (id, event, handler) => { node(id).handlers[event] = handler; },
+    readNumber: id => Number(node(id).value), fix: value => Math.round(value * 100000) / 100000,
+    pct: value => `${Math.round(value * 100000) / 1000}%`, clearChart() {}, drawBars() {}
+  });
+  node('q6calc').handlers.click();
+  assert.match(node('q6steps').mathRows[0].tex, /\\frac\{\\lambda_i\}/);
+  assert.match(node('q6steps').mathRows[2].tex, /\\sum_/);
+  assert.match(node('q6steps').mathRows[3].tex, /\]\^3/);
+  assert.match(node('q6out').mathRows[3].tex, /P\(L\\mid F\)\\approx0\.63291/);
+  assert.deepEqual(Array.from(node('q6out').mathRows, row => row.label), ['(a)', '(b)', '(c)', '(d)']);
+  for (const row of node('q6out').mathRows) {
+    assert.doesNotMatch(row.tex, /%/);
+    assert.doesNotMatch(row.fallback, /%/);
+  }
+  node('q6riskL').value = 2;
+  node('q6calc').handlers.click();
+  assert.equal(node('q6out').mathRows, undefined);
+  assert.equal(node('q6steps').mathRows, undefined);
+  assert.match(node('q6out').textContent, /from 0 to 1/);
+});

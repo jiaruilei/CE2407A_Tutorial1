@@ -41,8 +41,21 @@
   const get = id => document.getElementById(id);
   if (!get('q1network')) return;
   const listen = (id, action, handler) => get(id)?.addEventListener(action, handler);
-  const text = (id, value) => { if (get(id)) get(id).textContent = value; };
+  const text = (id, value) => {
+    const element = get(id);
+    if (!element) return;
+    if (globalThis.TutorialMath?.setText) globalThis.TutorialMath.setText(element, value);
+    else element.textContent = value;
+  };
+  const math = (target, rows) => {
+    if (globalThis.TutorialMath?.setLines) globalThis.TutorialMath.setLines(target, rows);
+    else {
+      const element = typeof target === 'string' ? get(target) : target;
+      if (element) element.textContent = rows.map(row => row.fallback ?? row.text ?? '').join('\n');
+    }
+  };
   const routeLabel = route => route.join(' → ');
+  const routeTex = route => route.join(String.raw`\to`);
   let currentRoute = [1];
 
   const points = {
@@ -76,8 +89,8 @@
     get('q1-next').disabled = !choices.length;
     get('q1-add').disabled = !choices.length;
     get('q1-undo').disabled = currentRoute.length < 2;
-    text('q1-current', routeLabel(currentRoute) + (last === 9 ? ' · Complete route' : ''));
-    text('q1-highlight', `Route: ${routeLabel(currentRoute)}`);
+    math('q1-current', [{ tex: routeTex(currentRoute) + (last === 9 ? String.raw`\quad\text{Complete route}` : ''), fallback: routeLabel(currentRoute) + (last === 9 ? ' · Complete route' : '') }]);
+    math('q1-highlight', [{ tex: String.raw`\text{Route: }${routeTex(currentRoute)}`, fallback: `Route: ${routeLabel(currentRoute)}` }]);
     drawNetwork();
   }
   listen('q1-add', 'click', () => {
@@ -95,9 +108,10 @@
       const routes = allRoutes();
       const count = document.createElement('p'); count.className = 'brief'; count.textContent = `${routes.length} routes in the sample space.`; container.append(count);
       routes.forEach(route => {
-        const button = document.createElement('button'); button.type = 'button'; button.className = 'secondary q1-route-button'; button.textContent = routeLabel(route);
+        const button = document.createElement('button'); button.type = 'button'; button.className = 'secondary q1-route-button';
         button.addEventListener('click', () => { currentRoute = [...route]; updateRoute(); });
         container.append(button);
+        math(button, [{ tex: routeTex(route), fallback: routeLabel(route) }]);
       });
     }
   });
@@ -106,16 +120,22 @@
   listen('q1-time-route', 'change', () => {
     currentRoute = timeRoute(); updateRoute();
     text('q1-time-results', 'Calculate the possible travel times.');
-    get('q1-combinations').replaceChildren();
+    text('q1-combinations', '');
   });
   listen('q1-calculate', 'click', () => {
     currentRoute = timeRoute(); updateRoute();
     const combinations = routeCombinations(currentRoute), times = possibleTimes(currentRoute);
-    text('q1-time-results', `${routeLabel(currentRoute)}\nPossible travel times: {${times.join(', ')}} hours.`);
+    math('q1-time-results', [
+      { tex: routeTex(currentRoute), fallback: routeLabel(currentRoute) },
+      { tex: String.raw`T\in\left\{${times.join(String.raw`,\,`)}\right\}\ \mathrm{h}`, fallback: `Possible travel times: {${times.join(', ')}} hours.` }
+    ]);
     const table = document.createElement('table'); table.className = 'tbl';
-    const headings = currentRoute.slice(1).map((city, index) => `${currentRoute[index]} → ${city}`).concat('Total (h)');
+    const headings = currentRoute.slice(1).map((city, index) =>
+      `<span data-tex="${routeTex([currentRoute[index], city])}">${currentRoute[index]} → ${city}</span>`).concat('Total (h)');
     table.innerHTML = `<caption class="sr-only">All leg-time combinations for ${routeLabel(currentRoute)}, in hours</caption><thead><tr>${headings.map(heading => `<th scope="col">${heading}</th>`).join('')}</tr></thead><tbody>${combinations.map(row => `<tr>${[...row.parts, row.total].map(value => `<td>${value}</td>`).join('')}</tr>`).join('')}</tbody>`;
-    get('q1-combinations').replaceChildren(table);
+    text('q1-combinations', '');
+    get('q1-combinations').append(table);
+    globalThis.TutorialMath?.typeset?.(table);
   });
   updateRoute();
 })();

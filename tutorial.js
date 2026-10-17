@@ -369,13 +369,13 @@ function q7Calculate() {
   const pOnlyOne = aOnly + bOnly, pAccurate = aOnly * accA + bOnly * accB + both;
   setMathLines('q7out', [
     { label: '(a)', tex: String.raw`P(A\cup B)=${fix(pAtLeastOne)}\quad(${pct(pAtLeastOne).replace('%', '\\%')})`, fallback: `P(at least one detection) = ${fix(pAtLeastOne)} (${pct(pAtLeastOne)})` },
-    { label: '(b)', tex: String.raw`P(A\triangle B)=${fix(pOnlyOne)}\quad(${pct(pOnlyOne).replace('%', '\\%')})`, fallback: `P(exactly one detection) = ${fix(pOnlyOne)} (${pct(pOnlyOne)})` },
+    { label: '(b)', tex: String.raw`\begin{aligned}&P[(A\cap B^{c})\cup(A^{c}\cap B)]\\&=${fix(pOnlyOne)}\quad(${pct(pOnlyOne).replace('%', '\\%')})\end{aligned}`, fallback: `P[(A ∩ Bᶜ) ∪ (Aᶜ ∩ B)] = ${fix(pOnlyOne)} (${pct(pOnlyOne)})` },
     { label: '(c)', tex: String.raw`P(\text{accurate})=${fix(pAccurate)}`, fallback: `P(accurate location) = ${fix(pAccurate)}` }
   ]);
   setMathLines('q7steps', [
     { text: 'By independence:' },
     { tex: String.raw`P(A\cup B)=1-(1-p_A)(1-p_B)`, fallback: 'P(at least one) = 1−(1−P(A))(1−P(B))' },
-    { tex: String.raw`P(A\triangle B)=p_A(1-p_B)+(1-p_A)p_B`, fallback: 'P(exactly one) = P(A)(1−P(B)) + (1−P(A))P(B)' },
+    { tex: String.raw`\begin{aligned}&P[(A\cap B^{c})\cup(A^{c}\cap B)]\\&=p_A(1-p_B)+(1-p_A)p_B\end{aligned}`, fallback: 'P[(A ∩ Bᶜ) ∪ (Aᶜ ∩ B)] = P(A)(1−P(B)) + (1−P(A))P(B)' },
     { tex: String.raw`\begin{aligned}P(\text{accurate})={}&a_Ap_A(1-p_B)\\&+a_B(1-p_A)p_B+p_Ap_B\end{aligned}`, fallback: 'P(accurate) = a_A p_A(1−p_B) + a_B(1−p_A)p_B + p_A p_B' }
   ]);
   drawBars('q7chart', ['A only', 'B only', 'Both'], [aOnly * accA, bOnly * accB, both], 'Accurate-location contributions');

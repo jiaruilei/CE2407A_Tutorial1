@@ -32,6 +32,6 @@ Intermediate values must retain full precision; rounding the priors before multi
 
   q7: `Two independent remote sensing devices detect a group of diseased trees. Let A and B denote detection by each device. Original pA=0.8 and pB=0.9. Location accuracy conditional on A-only detection is aA=0.7; for B-only detection aB=0.4; for both detections it is 1; for neither it is 0.
 The four disjoint outcomes have probabilities: A only=pA(1-pB)=0.08; B only=(1-pA)pB=0.18; both=pA pB=0.72; neither=(1-pA)(1-pB)=0.02.
-Part (a): P(at least one detection)=1-(1-pA)(1-pB)=pA+pB-pA pB=0.98. Part (b): P(exactly one detection)=pA(1-pB)+(1-pA)pB=0.26. Part (c): P(accurate location)=aA pA(1-pB)+aB(1-pA)pB+pA pB=0.056+0.072+0.72=0.848.
+Part (a): P(at least one detection)=1-(1-pA)(1-pB)=pA+pB-pA pB=0.98. Part (b): exactly one detection is (A∩B^c)∪(A^c∩B), with probability pA(1-pB)+(1-pA)pB=0.26. Use explicit unions, intersections and complements throughout Q7 to match the displayed formulas. Part (c): P(accurate location)=aA pA(1-pB)+aB(1-pA)pB+pA pB=0.056+0.072+0.72=0.848.
 Part (c) is unconditional. If instead explicitly conditioned on at least one detection, the answer would be 0.848/0.98≈0.865306. A-only and B-only events are mutually exclusive, but A and B themselves are independent and overlap. The model concerns a group already known to be diseased and supplies no false-positive rates. Current inputs may change pA,pB,aA,aB within [0,1], while both-detection accuracy remains 1.`
 });

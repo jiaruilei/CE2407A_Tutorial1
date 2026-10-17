@@ -30,7 +30,7 @@ test('health reports readiness without revealing a key, and missing-key chat mak
   const app = await start(t, { env: { OPENAI_API_KEY: '' }, fetchImpl: async () => { calls++; return reply(); } });
   const health = await fetch(`${app.base}/health`);
   assert.equal(health.status, 200);
-  assert.deepEqual(await health.json(), { configured: false });
+  assert.deepEqual(await health.json(), { configured: false, tutorials: ['tutorial1', 'tutorial2'] });
   const response = await app.chat();
   assert.equal(response.status, 503);
   assert.match((await response.json()).error, /not configured/);
@@ -60,7 +60,7 @@ test('Responses request uses the configured model, bounded budget, trusted conte
   assert.match(captured.body.input.at(-1).content, /untrusted learner data/);
   assert.equal(captured.body.input.at(-1).role, 'user');
   assert.equal(captured.body.input.length, 3);
-  assert.deepEqual(await (await fetch(`${app.base}/health`)).json(), { configured: true });
+  assert.deepEqual(await (await fetch(`${app.base}/health`)).json(), { configured: true, tutorials: ['tutorial1', 'tutorial2'] });
 });
 
 test('all seven question IDs are supported and malformed requests fail before calling OpenAI', async t => {
@@ -136,7 +136,7 @@ test('only explicit public files are served, with correct method and MIME handli
   assert.equal(script.headers.get('x-content-type-options'), 'nosniff');
   const image = await fetch(`${app.base}/assets/q5-original-plot.png`, { method: 'HEAD' });
   assert.equal(image.status, 200); assert.equal(image.headers.get('content-type'), 'image/png'); assert.equal(await image.text(), '');
-  for (const file of ['server.mjs', 'tutorial-context.mjs', 'package.json', '.env', '.env.example', '.git/config', 'tests/server.test.mjs', '%2e%2e/.env', 'assets/../../.env', 'assets%5C..%5C..%5C.env']) {
+  for (const file of ['server.mjs', 'tutorial-context.mjs', 'tutorial2-context.mjs', 'package.json', '.env', '.env.example', '.git/config', 'tests/server.test.mjs', '%2e%2e/.env', 'assets/../../.env', 'assets%5C..%5C..%5C.env']) {
     assert.equal((await fetch(`${app.base}/${file}`)).status, 404, file);
   }
   assert.equal((await fetch(`${app.base}/styles.css`, { method: 'POST' })).status, 405);
